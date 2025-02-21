@@ -48,6 +48,17 @@ export default function DefinitionOfTermsContainer({
 
 	return (
 		<Card title={Liferay.Language.get('definition-of-terms')}>
+			{hasLocalizedField(objectDefinitions, selectedEntityId) && (
+				<ClayAlert
+					displayType="info"
+					title={`${Liferay.Language.get('info')}:`}
+				>
+					{Liferay.Language.get(
+						'create-validations-using-expressions'
+					)}
+				</ClayAlert>
+			)}
+
 			<Text as="span" color="secondary">
 				{Liferay.Language.get(
 					'use-terms-to-populate-fields-dynamically-with-the-exception-of-the-freemarker-template-editor'
