@@ -54,7 +54,7 @@ export default function DefinitionOfTermsContainer({
 					title={`${Liferay.Language.get('info')}:`}
 				>
 					{Liferay.Language.get(
-						'create-validations-using-expressions'
+						'definition-of-terms-translatable-fields-info'
 					)}
 				</ClayAlert>
 			)}
