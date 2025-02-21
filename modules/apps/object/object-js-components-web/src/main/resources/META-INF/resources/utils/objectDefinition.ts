@@ -17,5 +17,5 @@ export function normalizeName(str: string) {
 }
 
 export function findObjectDefinitionById(objectDefinitions: ObjectDefinition[], id: number) {
-	return 	objectDefinitions.find(objectDefinition => objectDefinition.id === id);
+	return 	objectDefinitions.find(objectDefinition => objectDefinition.id === Number(id));
 }
