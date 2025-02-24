@@ -16,6 +16,11 @@ export function normalizeName(str: string) {
 	return removeAllSpecialCharacters(join);
 }
 
-export function findObjectDefinitionById(objectDefinitions: ObjectDefinition[], id: number) {
-	return 	objectDefinitions.find(objectDefinition => objectDefinition.id === Number(id));
+export function findObjectDefinitionById(
+	objectDefinitions: ObjectDefinition[],
+	id: number
+) {
+	return objectDefinitions.find(
+		(objectDefinition) => objectDefinition.id === Number(id)
+	);
 }
