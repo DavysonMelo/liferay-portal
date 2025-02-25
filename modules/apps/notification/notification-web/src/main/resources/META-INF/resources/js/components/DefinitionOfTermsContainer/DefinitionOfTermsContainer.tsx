@@ -49,7 +49,7 @@ export default function DefinitionOfTermsContainer({
 	
 	return (
 		<Card title={Liferay.Language.get('definition-of-terms')}>
-			{hasLocalizedField(objectDefinitions, selectedEntityId) && (
+			{localizedFields && (
 				<ClayAlert
 					displayType="info"
 					title={`${Liferay.Language.get('info')}:`}
