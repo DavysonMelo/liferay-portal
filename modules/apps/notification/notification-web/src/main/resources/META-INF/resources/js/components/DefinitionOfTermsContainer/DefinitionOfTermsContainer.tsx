@@ -34,7 +34,12 @@ function hasLocalizedField(
 			objectDefinitions
 		);
 
-	return !!(selectedObjectDefinition) && fieldsUtils.hasLocalizedField(selectedObjectDefinition as ObjectDefinition);
+	return (
+		!!selectedObjectDefinition &&
+		fieldsUtils.hasLocalizedField(
+			selectedObjectDefinition as ObjectDefinition
+		)
+	);
 }
 
 export default function DefinitionOfTermsContainer({
@@ -42,11 +47,11 @@ export default function DefinitionOfTermsContainer({
 	objectDefinitions,
 }: DefinitionOfTermsContainerProps) {
 	const [selectedEntityId, setSelectedEntityId] = useState<number>(0);
-	
+
 	const localizedFields = useMemo(() => {
-		return hasLocalizedField(objectDefinitions, selectedEntityId)
-		}, [objectDefinitions, selectedEntityId])
-	
+		return hasLocalizedField(objectDefinitions, selectedEntityId);
+	}, [objectDefinitions, selectedEntityId]);
+
 	return (
 		<Card title={Liferay.Language.get('definition-of-terms')}>
 			{localizedFields && (
