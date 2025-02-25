@@ -10,7 +10,7 @@ import {
 	fieldsUtils,
 	objectDefinitionUtils,
 } from '@liferay/object-js-components-web';
-import React, {useState} from 'react';
+import React, {useMemo, useState} from 'react';
 
 import {DefinitionOfTerms} from './DefinitionOfTerms';
 import {GeneralTerms} from './GeneralTerms';
@@ -45,7 +45,11 @@ export default function DefinitionOfTermsContainer({
 	objectDefinitions,
 }: DefinitionOfTermsContainerProps) {
 	const [selectedEntityId, setSelectedEntityId] = useState<number>(0);
-
+	
+	const localizedFields = useMemo(() => {
+		return hasLocalizedField(objectDefinitions, selectedEntityId)
+		}, [objectDefinitions, selectedEntityId])
+	
 	return (
 		<Card title={Liferay.Language.get('definition-of-terms')}>
 			{hasLocalizedField(objectDefinitions, selectedEntityId) && (
