@@ -34,10 +34,7 @@ function hasLocalizedField(
 			objectDefinitions
 		);
 
-	return Boolean(
-		selectedObjectDefinition &&
-			fieldsUtils.hasLocalizedField(selectedObjectDefinition!)
-	);
+	return !!(selectedObjectDefinition) && fieldsUtils.hasLocalizedField(selectedObjectDefinition as ObjectDefinition);
 }
 
 export default function DefinitionOfTermsContainer({
