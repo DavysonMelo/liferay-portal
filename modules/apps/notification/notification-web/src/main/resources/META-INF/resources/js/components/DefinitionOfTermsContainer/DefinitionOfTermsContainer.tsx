@@ -30,8 +30,8 @@ function hasLocalizedField(
 
 	const selectedObjectDefinition =
 		objectDefinitionUtils.findObjectDefinitionById(
-			objectDefinitions,
-			entityId
+			entityId,
+			objectDefinitions
 		);
 
 	return Boolean(
