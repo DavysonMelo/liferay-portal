@@ -15,7 +15,7 @@ interface DefinitionOfTermsProps {
 	baseResourceURL: string;
 	objectDefinitions: ObjectDefinition[];
 	selectedEntityId: number;
-	setSelectedEntityId: Function;
+	setSelectedEntityId: (value: number) => void;
 }
 export interface RelationshipSections {
 	objectRelationshipId: number;
