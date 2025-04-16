@@ -12,6 +12,7 @@ ObjectDefinition objectDefinition = (ObjectDefinition)request.getAttribute(Objec
 
 ObjectDefinitionsDetailsDisplayContext objectDefinitionsDetailsDisplayContext = (ObjectDefinitionsDetailsDisplayContext)request.getAttribute(WebKeys.PORTLET_DISPLAY_CONTEXT);
 
+portletDisplay.setCustomCSSClassName("container-fluid-max-xxxl");
 portletDisplay.setShowBackIcon(true);
 portletDisplay.setURLBack(
 	ParamUtil.getString(
