@@ -592,8 +592,24 @@
 	color: $gray-700;
 }
 
+.scheduler-view-month {
+	.scheduler-event-title {
+		display: block;
+		.sr-only {
+			display: inline;
+		}
+	}
+	.scheduler-event-content {
+		display: block !important;
+	}
+}
+
 .scheduler-view-table-data-event {
 	padding: 0 3px;
+
+	.scheduler-event {
+		height: 52px !important;
+	}
 }
 
 .scheduler-view-table-events-overlay-node {
