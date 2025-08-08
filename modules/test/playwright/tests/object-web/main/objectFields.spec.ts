@@ -1333,18 +1333,18 @@ test.describe('Manage objectFields through Objects Admin UI', () => {
 			objectFieldBusinessTypes: ['encrypted'],
 		});
 
-		const objectDefinition =
+		const objectDefinition1 =
 			await apiHelpers.objectAdmin.postRandomObjectDefinition({
 				objectFields,
 				status: {code: 0},
 			});
 
 		apiHelpers.data.push({
-			id: objectDefinition.id,
+			id: objectDefinition1.id,
 			type: 'objectDefinition',
 		});
 
-		await objectFieldsPage.goto(objectDefinition.label['en_US']);
+		await objectFieldsPage.goto(objectDefinition1.label['en_US']);
 
 		await objectFieldsPage.openObjectField(objectFields[0].label['en_US']);
 
