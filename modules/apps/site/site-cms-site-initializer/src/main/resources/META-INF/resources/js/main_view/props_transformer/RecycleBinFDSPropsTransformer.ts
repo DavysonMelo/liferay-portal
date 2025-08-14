@@ -28,6 +28,21 @@ interface ItemData {
 	embedded: {content: string; objectEntryFolderId: number; title: string};
 }
 
+type Action = {
+	href: string;
+	method: string;
+};
+interface ItemData {
+	actions?: {
+		delete: Action;
+		expire: Action;
+		get: Action;
+		replace: Action;
+		update: Action;
+	};
+	embedded: {content: string; title: string};
+}
+
 export default function RecycleBinFDSPropsTransformer({
 	...otherProps
 }: {
