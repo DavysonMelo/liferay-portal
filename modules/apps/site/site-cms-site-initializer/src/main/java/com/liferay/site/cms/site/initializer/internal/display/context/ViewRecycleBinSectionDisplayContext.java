@@ -62,9 +62,6 @@ public class ViewRecycleBinSectionDisplayContext
 	public List<FDSActionDropdownItem> getFDSActionDropdownItems() {
 		return ListUtil.fromArray(
 			new FDSActionDropdownItem(
-				language.get(
-					httpServletRequest,
-					"are-you-sure-you-want-to-delete-this-entry"),
 				null, "trash", "delete",
 				language.get(httpServletRequest, "delete"), "delete", "delete",
 				"headless"),
