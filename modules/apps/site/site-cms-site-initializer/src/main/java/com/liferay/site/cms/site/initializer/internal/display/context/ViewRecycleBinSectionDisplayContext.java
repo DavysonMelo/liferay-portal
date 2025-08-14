@@ -63,8 +63,8 @@ public class ViewRecycleBinSectionDisplayContext
 		return ListUtil.fromArray(
 			new FDSActionDropdownItem(
 				null, "trash", "delete",
-				language.get(httpServletRequest, "delete"), "delete", "delete",
-				"headless"),
+				language.get(httpServletRequest, "delete"), null, "delete",
+				null),
 			new FDSActionDropdownItem(
 				null, "restore", "restore",
 				language.get(httpServletRequest, "restore"), "restore",
