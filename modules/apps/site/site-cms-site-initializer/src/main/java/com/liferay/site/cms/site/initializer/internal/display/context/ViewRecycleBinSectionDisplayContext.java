@@ -68,7 +68,7 @@ public class ViewRecycleBinSectionDisplayContext
 			new FDSActionDropdownItem(
 				null, "restore", "restore",
 				language.get(httpServletRequest, "restore"), "restore",
-				"restore", "headless"));
+				"restore", null));
 	}
 
 	@Override
