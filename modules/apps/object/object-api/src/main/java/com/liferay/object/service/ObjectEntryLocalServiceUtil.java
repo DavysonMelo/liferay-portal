@@ -653,6 +653,16 @@ public class ObjectEntryLocalServiceUtil {
 			userId, objectDefinitionId, primaryKey, values);
 	}
 
+	public static void moveObjectEntriesToTrash(
+			long userId,
+			com.liferay.object.model.ObjectEntryFolder objectEntryFolder,
+			com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws PortalException {
+
+		getService().moveObjectEntriesToTrash(
+			userId, objectEntryFolder, serviceContext);
+	}
+
 	public static ObjectEntry moveObjectEntryToTrash(
 			long userId, ObjectEntry objectEntry,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)

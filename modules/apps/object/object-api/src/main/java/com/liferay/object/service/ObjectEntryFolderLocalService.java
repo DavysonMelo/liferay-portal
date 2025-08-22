@@ -346,6 +346,17 @@ public interface ObjectEntryFolderLocalService
 	public PersistedModel getPersistedModel(Serializable primaryKeyObj)
 		throws PortalException;
 
+	public void moveObjectEntryFoldersToTrash(
+			long userId, ObjectEntryFolder objectEntryFolder,
+			ServiceContext serviceContext)
+		throws PortalException;
+
+	@Indexable(type = IndexableType.REINDEX)
+	public ObjectEntryFolder moveObjectEntryFolderToTrash(
+			long userId, ObjectEntryFolder objectEntryFolder,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	public void subscribeObjectEntryFolder(
 			long userId, long groupId, long objectEntryFolderId)
 		throws PortalException;
@@ -374,5 +385,9 @@ public interface ObjectEntryFolderLocalService
 	@Indexable(type = IndexableType.REINDEX)
 	public ObjectEntryFolder updateObjectEntryFolder(
 		ObjectEntryFolder objectEntryFolder);
+
+	public ObjectEntryFolder updateStatus(
+			ObjectEntryFolder objectEntryFolder, int status)
+		throws PortalException;
 
 }

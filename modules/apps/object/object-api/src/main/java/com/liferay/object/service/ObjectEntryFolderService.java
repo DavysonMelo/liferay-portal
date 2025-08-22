@@ -95,6 +95,11 @@ public interface ObjectEntryFolderService extends BaseService {
 	 */
 	public String getOSGiServiceIdentifier();
 
+	public ObjectEntryFolder moveObjectEntryFolderToTrash(
+			long userId, ObjectEntryFolder objectEntryFolder,
+			ServiceContext serviceContext)
+		throws PortalException;
+
 	public void subscribeObjectEntryFolder(
 			long userId, long groupId, long objectEntryFolderId)
 		throws PortalException;

@@ -426,6 +426,50 @@ public class ObjectEntryFolderServiceHttp {
 		}
 	}
 
+	public static com.liferay.object.model.ObjectEntryFolder
+			moveObjectEntryFolderToTrash(
+				HttpPrincipal httpPrincipal, long userId,
+				com.liferay.object.model.ObjectEntryFolder objectEntryFolder,
+				com.liferay.portal.kernel.service.ServiceContext serviceContext)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				ObjectEntryFolderServiceUtil.class,
+				"moveObjectEntryFolderToTrash",
+				_moveObjectEntryFolderToTrashParameterTypes9);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, userId, objectEntryFolder, serviceContext);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				if (exception instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						exception;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return (com.liferay.object.model.ObjectEntryFolder)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
 	public static void subscribeObjectEntryFolder(
 			HttpPrincipal httpPrincipal, long userId, long groupId,
 			long objectEntryFolderId)
@@ -435,7 +479,7 @@ public class ObjectEntryFolderServiceHttp {
 			MethodKey methodKey = new MethodKey(
 				ObjectEntryFolderServiceUtil.class,
 				"subscribeObjectEntryFolder",
-				_subscribeObjectEntryFolderParameterTypes9);
+				_subscribeObjectEntryFolderParameterTypes10);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, userId, groupId, objectEntryFolderId);
@@ -473,7 +517,7 @@ public class ObjectEntryFolderServiceHttp {
 			MethodKey methodKey = new MethodKey(
 				ObjectEntryFolderServiceUtil.class,
 				"unsubscribeObjectEntryFolder",
-				_unsubscribeObjectEntryFolderParameterTypes10);
+				_unsubscribeObjectEntryFolderParameterTypes11);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, userId, groupId, objectEntryFolderId);
@@ -513,7 +557,7 @@ public class ObjectEntryFolderServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				ObjectEntryFolderServiceUtil.class, "updateObjectEntryFolder",
-				_updateObjectEntryFolderParameterTypes11);
+				_updateObjectEntryFolderParameterTypes12);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, objectEntryFolderId, parentObjectEntryFolderId,
@@ -575,13 +619,20 @@ public class ObjectEntryFolderServiceHttp {
 		new Class[] {long.class, long.class, long.class, int.class, int.class};
 	private static final Class<?>[] _getObjectEntryFoldersCountParameterTypes8 =
 		new Class[] {long.class, long.class, long.class};
-	private static final Class<?>[] _subscribeObjectEntryFolderParameterTypes9 =
-		new Class[] {long.class, long.class, long.class};
 	private static final Class<?>[]
-		_unsubscribeObjectEntryFolderParameterTypes10 = new Class[] {
+		_moveObjectEntryFolderToTrashParameterTypes9 = new Class[] {
+			long.class, com.liferay.object.model.ObjectEntryFolder.class,
+			com.liferay.portal.kernel.service.ServiceContext.class
+		};
+	private static final Class<?>[]
+		_subscribeObjectEntryFolderParameterTypes10 = new Class[] {
 			long.class, long.class, long.class
 		};
-	private static final Class<?>[] _updateObjectEntryFolderParameterTypes11 =
+	private static final Class<?>[]
+		_unsubscribeObjectEntryFolderParameterTypes11 = new Class[] {
+			long.class, long.class, long.class
+		};
+	private static final Class<?>[] _updateObjectEntryFolderParameterTypes12 =
 		new Class[] {
 			long.class, long.class, String.class, java.util.Map.class,
 			String.class, com.liferay.portal.kernel.service.ServiceContext.class
