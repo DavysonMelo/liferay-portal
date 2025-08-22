@@ -67,6 +67,7 @@ import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.business.type.ObjectFieldBusinessTypeRegistry;
 import com.liferay.object.field.setting.util.ObjectFieldSettingUtil;
 import com.liferay.object.field.util.ObjectFieldUtil;
+import com.liferay.object.internal.entry.folder.util.ObjectEntryFolderUtil;
 import com.liferay.object.internal.entry.util.ObjectEntrySearchUtil;
 import com.liferay.object.internal.entry.util.ObjectEntryUtil;
 import com.liferay.object.internal.filter.parser.CurrentUserObjectFilterParser;
@@ -1724,7 +1725,8 @@ public class ObjectEntryLocalServiceImpl
 		long objectEntryFolderId = objectEntry.getObjectEntryFolderId();
 
 		objectEntry.setObjectEntryFolderId(
-			_getRootObjectEntryFolderId(objectEntry.getObjectEntryFolderId()));
+			ObjectEntryFolderUtil.getRootObjectEntryFolderId(
+				objectEntryFolderId));
 
 		return _moveObjectEntryToTrash(
 			userId, objectEntry, objectEntryFolderId, serviceContext);
@@ -1788,7 +1790,7 @@ public class ObjectEntryLocalServiceImpl
 
 			if (objectEntryFolder == null) {
 				objectEntry.setObjectEntryFolderId(
-					_getRootObjectEntryFolderId(
+					ObjectEntryFolderUtil.getRootObjectEntryFolderId(
 						objectEntry.getObjectEntryFolderId()));
 			}
 			else {
@@ -4470,37 +4472,6 @@ public class ObjectEntryLocalServiceImpl
 
 		return _getExtensionDynamicObjectDefinitionTable(
 			rootObjectDefinition.getObjectDefinitionId());
-	}
-
-	private long _getRootObjectEntryFolderId(long objectEntryFolderId) {
-		ObjectEntryFolder objectEntryFolder =
-			_objectEntryFolderPersistence.fetchByPrimaryKey(
-				objectEntryFolderId);
-
-		if (objectEntryFolder == null) {
-			return ObjectEntryFolderConstants.
-				PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT;
-		}
-
-		List<String> parts = com.liferay.petra.string.StringUtil.split(
-			objectEntryFolder.getTreePath(), CharPool.SLASH);
-
-		ObjectEntryFolder rootObjectEntryFolder =
-			_objectEntryFolderPersistence.fetchByPrimaryKey(
-				GetterUtil.getLong(parts.get(0)));
-
-		if ((rootObjectEntryFolder != null) &&
-			(Objects.equals(
-				rootObjectEntryFolder.getExternalReferenceCode(),
-				ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS) ||
-			 Objects.equals(
-				 rootObjectEntryFolder.getExternalReferenceCode(),
-				 ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES))) {
-
-			return rootObjectEntryFolder.getObjectEntryFolderId();
-		}
-
-		return ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT;
 	}
 
 	private Expression<?>[] _getSelectExpressions(
