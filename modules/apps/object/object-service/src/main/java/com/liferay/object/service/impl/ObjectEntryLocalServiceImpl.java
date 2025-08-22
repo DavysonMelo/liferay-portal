@@ -1704,7 +1704,8 @@ public class ObjectEntryLocalServiceImpl
 			}
 
 			objectEntry = _moveObjectEntryToTrash(
-				userId, objectEntry, serviceContext);
+				userId, objectEntry, objectEntry.getObjectEntryFolderId(),
+				serviceContext);
 
 			_reindex(objectEntry);
 		}
@@ -1720,7 +1721,13 @@ public class ObjectEntryLocalServiceImpl
 			throw new TrashEntryException();
 		}
 
-		return _moveObjectEntryToTrash(userId, objectEntry, serviceContext);
+		long objectEntryFolderId = objectEntry.getObjectEntryFolderId();
+
+		objectEntry.setObjectEntryFolderId(
+			_getRootObjectEntryFolderId(objectEntry.getObjectEntryFolderId()));
+
+		return _moveObjectEntryToTrash(
+			userId, objectEntry, objectEntryFolderId, serviceContext);
 	}
 
 	@Override
@@ -4462,6 +4469,37 @@ public class ObjectEntryLocalServiceImpl
 			rootObjectDefinition.getObjectDefinitionId());
 	}
 
+	private long _getRootObjectEntryFolderId(long objectEntryFolderId) {
+		ObjectEntryFolder objectEntryFolder =
+			_objectEntryFolderPersistence.fetchByPrimaryKey(
+				objectEntryFolderId);
+
+		if (objectEntryFolder == null) {
+			return ObjectEntryFolderConstants.
+				PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT;
+		}
+
+		List<String> parts = com.liferay.petra.string.StringUtil.split(
+			objectEntryFolder.getTreePath(), CharPool.SLASH);
+
+		ObjectEntryFolder rootObjectEntryFolder =
+			_objectEntryFolderPersistence.fetchByPrimaryKey(
+				GetterUtil.getLong(parts.get(0)));
+
+		if ((rootObjectEntryFolder != null) &&
+			(Objects.equals(
+				rootObjectEntryFolder.getExternalReferenceCode(),
+				ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS) ||
+			 Objects.equals(
+				 rootObjectEntryFolder.getExternalReferenceCode(),
+				 ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES))) {
+
+			return rootObjectEntryFolder.getObjectEntryFolderId();
+		}
+
+		return ObjectEntryFolderConstants.PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT;
+	}
+
 	private Expression<?>[] _getSelectExpressions(
 		DynamicObjectDefinitionLocalizationTable
 			dynamicObjectDefinitionLocalizationTable) {
@@ -5128,7 +5166,8 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private ObjectEntry _moveObjectEntryToTrash(
-			long userId, ObjectEntry objectEntry, ServiceContext serviceContext)
+			long userId, ObjectEntry objectEntry, long objectEntryFolderId,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		List<ObjectEntryVersion> objectEntryVersions =
@@ -5159,6 +5198,8 @@ public class ObjectEntryLocalServiceImpl
 			objectEntry.getObjectEntryId(), objectEntry.getUuid(), null,
 			_getStatus(oldStatus), statusOVPs,
 			UnicodePropertiesBuilder.put(
+				"objectEntryFolderId", objectEntryFolderId
+			).put(
 				"title", objectEntry.getObjectEntryId()
 			).build());
 
