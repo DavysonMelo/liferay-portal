@@ -1759,13 +1759,23 @@ public class ObjectEntryLocalServiceImpl
 				RestoreEntryException.INVALID_STATUS);
 		}
 
-		if (objectEntry.getObjectEntryFolderId() !=
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				objectEntry.getObjectDefinitionId());
+
+		TrashEntry trashEntry = _trashEntryLocalService.getEntry(
+			objectDefinition.getClassName(), objectEntry.getObjectEntryId());
+
+		long objectEntryFolderId = GetterUtil.getLong(
+			trashEntry.getTypeSettingsProperty("objectEntryFolderId"));
+
+		if (objectEntryFolderId !=
 				ObjectEntryFolderConstants.
 					PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT) {
 
 			ObjectEntryFolder objectEntryFolder =
 				_objectEntryFolderPersistence.fetchByPrimaryKey(
-					objectEntry.getObjectEntryFolderId());
+					objectEntryFolderId);
 
 			while ((objectEntryFolder != null) &&
 				   (objectEntryFolder.getStatus() ==
@@ -1778,8 +1788,8 @@ public class ObjectEntryLocalServiceImpl
 
 			if (objectEntryFolder == null) {
 				objectEntry.setObjectEntryFolderId(
-					ObjectEntryFolderConstants.
-						PARENT_OBJECT_ENTRY_FOLDER_ID_DEFAULT);
+					_getRootObjectEntryFolderId(
+						objectEntry.getObjectEntryFolderId()));
 			}
 			else {
 				objectEntry.setObjectEntryFolderId(
@@ -1788,13 +1798,6 @@ public class ObjectEntryLocalServiceImpl
 
 			objectEntry = objectEntryPersistence.update(objectEntry);
 		}
-
-		ObjectDefinition objectDefinition =
-			_objectDefinitionPersistence.findByPrimaryKey(
-				objectEntry.getObjectDefinitionId());
-
-		TrashEntry trashEntry = _trashEntryLocalService.getEntry(
-			objectDefinition.getClassName(), objectEntry.getObjectEntryId());
 
 		objectEntry = updateStatus(
 			userId, objectEntry, trashEntry.getStatus(), serviceContext);
