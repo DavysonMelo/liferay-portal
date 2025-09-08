@@ -18,7 +18,6 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -169,6 +168,8 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 		_importTaskResource.setContextUriInfo(contextUriInfo);
 		_importTaskResource.setContextUser(contextUser);
 
+		List<BulkActionItem> bulkActionItems = new ArrayList<>();
+
 		for (Map.Entry<String, List<BulkActionItem>> entry :
 				bulkActionItemsMap.entrySet()) {
 
@@ -193,8 +194,12 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 					bulkActionItem.getName(),
 					_getBulkActionTaskItemObjectDefinitionId(),
 					taskItemDelegateName);
+
+				bulkActionItems.add(bulkActionItem);
 			}
 		}
+
+		bulkActionTask.setNumberOfItems(bulkActionItems::size);
 
 		return bulkActionTask;
 	}
@@ -221,27 +226,37 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 			_searchResultResource.setContextUriInfo(contextUriInfo);
 			_searchResultResource.setContextUser(contextUser);
 
-			Page<SearchResult> searchPage = _searchResultResource.getSearchPage(
-				null, true, null, null, search, filter,
-				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null);
+			int page = 1;
+			int pageSize = 500;
+			Page<SearchResult> searchPage;
 
-			for (SearchResult searchResult : searchPage.getItems()) {
-				JSONObject jsonObject = _jsonFactory.createJSONObject(
-					String.valueOf(searchResult.getEmbedded()));
+			do {
+				searchPage = _searchResultResource.getSearchPage(
+					null, true, null, null, search, filter,
+					Pagination.of(page, pageSize), null);
 
-				bulkActionItemsMap.computeIfAbsent(
-					searchResult.getEntryClassName(), key -> new ArrayList<>()
-				).add(
-					new BulkActionItem() {
-						{
-							setClassExternalReferenceCode(
-								() -> jsonObject.getString(
-									"externalReferenceCode"));
-							setClassPK(() -> jsonObject.getLong("id"));
+				for (SearchResult searchResult : searchPage.getItems()) {
+					JSONObject jsonObject = _jsonFactory.createJSONObject(
+						String.valueOf(searchResult.getEmbedded()));
+
+					bulkActionItemsMap.computeIfAbsent(
+						searchResult.getEntryClassName(),
+						key -> new ArrayList<>()
+					).add(
+						new BulkActionItem() {
+							{
+								setClassExternalReferenceCode(
+									() -> jsonObject.getString(
+										"externalReferenceCode"));
+								setClassPK(() -> jsonObject.getLong("id"));
+							}
 						}
-					}
-				);
+					);
+				}
+
+				page++;
 			}
+			while (((page - 1) * pageSize) < searchPage.getTotalCount());
 
 			return bulkActionItemsMap;
 		}
