@@ -18,7 +18,6 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
-import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -169,6 +168,8 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 		_importTaskResource.setContextUriInfo(contextUriInfo);
 		_importTaskResource.setContextUser(contextUser);
 
+		List<BulkActionItem> bulkActionItems = new ArrayList<>();
+
 		for (Map.Entry<String, List<BulkActionItem>> entry :
 				bulkActionItemsMap.entrySet()) {
 
@@ -193,8 +194,12 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 					bulkActionItem.getName(),
 					_getBulkActionTaskItemObjectDefinitionId(),
 					taskItemDelegateName);
+
+				bulkActionItems.add(bulkActionItem);
 			}
 		}
+
+		bulkActionTask.setNumberOfItems(bulkActionItems::size);
 
 		return bulkActionTask;
 	}
@@ -222,8 +227,8 @@ public class BulkActionResourceImpl extends BaseBulkActionResourceImpl {
 			_searchResultResource.setContextUser(contextUser);
 
 			Page<SearchResult> searchPage = _searchResultResource.getSearchPage(
-				null, true, null, null, search, filter,
-				Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null);
+				null, true, null, null, search, filter, Pagination.of(1, 500),
+				null);
 
 			for (SearchResult searchResult : searchPage.getItems()) {
 				JSONObject jsonObject = _jsonFactory.createJSONObject(
