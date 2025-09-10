@@ -35,8 +35,9 @@ ViewRecycleBinSectionDisplayContext viewRecycleBinSectionDisplayContext = (ViewR
 			id="<%= CMSSiteInitializerFDSNames.RECYCLE_BIN_SECTION %>"
 			itemsPerPage="<%= 20 %>"
 			propsTransformer="{RecycleBinFDSPropsTransformer} from site-cms-site-initializer"
-			selectedItemsKey="id"
+			selectedItemsKey="embedded.id" 
 			selectionType="multiple"
+			showSelectAll="<%= true %>"
 			style="fluid"
 		/>
 	</div>
