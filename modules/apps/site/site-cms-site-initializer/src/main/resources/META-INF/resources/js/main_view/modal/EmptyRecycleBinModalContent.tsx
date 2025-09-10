@@ -7,18 +7,18 @@ import ClayButton from '@clayui/button';
 import ClayModal from '@clayui/modal';
 import React from 'react';
 
+import emptyRecycleBin from '../props_transformer/actions/emptyRecycleBinAction';
+
 export default function EmptyRecycleBinModalContent({
 	closeModal,
-	emptyRecycleBin,
 }: {
 	closeModal: () => void;
-	emptyRecycleBin: () => Promise<void>;
 }) {
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
 		try {
-			await emptyRecycleBin();
+			emptyRecycleBin();
 		}
 		finally {
 			closeModal();
