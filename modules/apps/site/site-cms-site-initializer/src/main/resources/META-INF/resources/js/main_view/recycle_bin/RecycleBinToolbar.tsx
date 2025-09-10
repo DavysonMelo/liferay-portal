@@ -8,49 +8,12 @@ import '../../../css/recycle_bin/RecycleBin.scss';
 import {ClayButtonWithIcon} from '@clayui/button';
 import {ClayDropDownWithItems} from '@clayui/drop-down';
 import ClayToolbar from '@clayui/toolbar';
-import {openModal, openToast} from 'frontend-js-components-web';
-import {fetch} from 'frontend-js-web';
+import {openModal} from 'frontend-js-components-web';
 import React from 'react';
 
 import EmptyRecycleBinModalContent from '../modal/EmptyRecycleBinModalContent';
 
 export default function RecycleBinToolbar() {
-	const emptyRecycleBin = async () => {
-		const filter = encodeURIComponent(
-			"cmsRoot eq true and (cmsSection eq 'contents' or cmsSection eq 'files') and status eq 8"
-		);
-
-		const response = await fetch(
-			`/o/headless-cms/v1.0/bulk-action?filter=${filter}&nestedFields=embedded`,
-			{
-				body: JSON.stringify({
-					selectAll: true,
-					type: 'DeleteBulkAction',
-				}),
-				headers: {
-					'Accept': 'application/json',
-					'Content-Type': 'application/json',
-					'x-csrf-token': Liferay.authToken,
-				},
-				method: 'POST',
-			}
-		);
-
-		const entry = await response.json();
-
-		openToast({
-			message: Liferay.Util.sub(
-				Liferay.Language.get(
-					'x-items-were-permanently-deleted-from-the-recycle-bin'
-				),
-				entry.numberOfItems
-			),
-			type: 'success',
-		});
-
-		// TODO Reload page
-
-	};
 
 	return (
 		<div>
@@ -84,13 +47,11 @@ export default function RecycleBinToolbar() {
 													closeModal,
 												}: {
 													closeModal: () => void;
-												}) =>
-													EmptyRecycleBinModalContent(
-														{
-															closeModal,
-															emptyRecycleBin,
-														}
-													),
+												}) => (
+													<EmptyRecycleBinModalContent
+														closeModal={closeModal}
+													/>
+												),
 												size: 'md',
 												status: 'danger',
 											});
