@@ -6,11 +6,8 @@
 import {IInternalRenderer} from '@liferay/frontend-data-set-web';
 import {openToast} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
-import React from 'react';
 
 import {openGenericFDSDeleteConfirmationModal} from '../../common/utils/genericOpenModalUtil';
-import {ISearchAssetObjectEntry} from '../../structure_builder/types/AssetType';
-import AssetTypeInfoPanel from '../info_panel/AssetTypeInfoPanelContent';
 import deleteAssetEntriesBulkAction from './actions/deleteAssetEntriesBulkAction';
 import {restoreItemAction} from './actions/restoreItemAction';
 import AuthorRenderer from './cell_renderers/AuthorRenderer';
