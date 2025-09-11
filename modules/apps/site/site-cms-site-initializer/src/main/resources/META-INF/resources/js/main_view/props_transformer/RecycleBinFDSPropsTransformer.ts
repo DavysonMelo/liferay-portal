@@ -105,14 +105,16 @@ export default function RecycleBinFDSPropsTransformer({
 		},
 		onBulkActionItemClick: ({
 			action,
+			loadData,
 			selectedData,
 		}: {
 			action: any;
+			loadData: () => {};
 			selectedData: any;
 		}) => {
 			if (action?.data?.id === 'delete') {
 				deleteAssetEntriesBulkAction({
-					actionId: action.data.id,
+					loadData,
 					selectedData,
 				});
 			}
