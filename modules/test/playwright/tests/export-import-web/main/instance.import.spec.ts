@@ -376,7 +376,7 @@ test('can import custom object entries at instance level with or without permiss
 	// Export with permissions
 
 	const exportFilePath = await companyExportImportPage.export(
-		'Tests 1 Items',
+		['Tests 1 Items'],
 		true
 	);
 
@@ -793,7 +793,7 @@ test(
 		);
 
 		const exportFilePath = await companyExportImportPage.export(
-			`Tests 1 Items`,
+			[`Tests 1 Items`],
 			true
 		);
 
