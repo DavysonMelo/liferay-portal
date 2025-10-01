@@ -34,6 +34,7 @@ import {generateObjectFields} from '../../object-web/main/utils/generateObjectFi
 import {companyExportImportPageTest} from './fixtures/companyExportImportPagesTest';
 import {exportImportPagesTest} from './fixtures/exportImportPagesTest';
 import {stagingPageTest} from './fixtures/stagingPageTest';
+import {toDateRangeDate, toDateRangeTime} from './utils/dateRangeUtil';
 import {objectDefitionRequestData} from './utils/objectDefitionRequestData';
 
 export const test = mergeTests(
@@ -75,8 +76,9 @@ test('can export and import custom object entries at instance level', async ({
 		'c/tests'
 	);
 
-	const exportFilePath =
-		await companyExportImportPage.export('Tests 1 Items');
+	const exportFilePath = await companyExportImportPage.export([
+		'Tests 1 Items',
+	]);
 
 	const content = await readFileFromZip('C_Test.json', exportFilePath);
 
@@ -165,9 +167,9 @@ test('can import account restricted entry when account does and does not exist i
 		applicationName
 	);
 
-	const exportFilePath = await companyExportImportPage.export(
-		`${objectDefinition.name} 1 Items`
-	);
+	const exportFilePath = await companyExportImportPage.export([
+		`${objectDefinition.name} 1 Items`,
+	]);
 
 	await test.step('assert entry is imported with account relationship properties when it exists', async () => {
 		await apiHelpers.delete(
@@ -225,6 +227,121 @@ test('can import account restricted entry when account does and does not exist i
 			[accountEntryERC]: importedAccount.externalReferenceCode,
 			[accountEntryId]: importedAccount.id,
 		});
+	});
+});
+
+test('can import custom and system objects entries at instance level with date filter', async ({
+	apiHelpers,
+	companyExportImportPage,
+	page,
+}) => {
+	const objectActionAPIClient =
+		await apiHelpers.buildRestClient(ObjectDefinitionAPI);
+
+	const {body: objectDefinition} =
+		await objectActionAPIClient.postObjectDefinition(
+			objectDefitionRequestData()
+		);
+
+	apiHelpers.data.push({id: objectDefinition.id, type: 'objectDefinition'});
+
+	const objectEntry = await apiHelpers.objectEntry.postObjectEntry(
+		{externalReferenceCode: '', name: 'test'},
+		'c/tests'
+	);
+
+	const cookiesObjectEntries = await apiHelpers.get(
+		`${apiHelpers.baseUrl}functional-cookies-entries/`
+	);
+
+	const applicationName = 'c/' + objectDefinition.name.toLowerCase() + 's';
+
+	const objectEntryCreationDate = cookiesObjectEntries.items[0].dateCreated;
+
+	await test.step('Export Functional Cookie Entries with date filter', async () => {
+		await companyExportImportPage.applicationsMenuPage.goToExport();
+
+		const startDate = new Date(objectEntryCreationDate);
+		startDate.setUTCDate(startDate.getUTCDate() - 1);
+
+		const endDate = new Date(objectEntryCreationDate);
+		endDate.setUTCMinutes(endDate.getUTCMinutes() + 1);
+
+		await page.getByTestId('creationMenuNewButton').nth(1).click();
+
+		await page.getByLabel('Export Individual Deletions:').check();
+
+		const functionalCookieEntriesExportFilePath =
+			await companyExportImportPage.export(
+				['Functional Cookie Entries 20 Items', 'Tests 1 Items'],
+				false,
+				{
+					endDate: toDateRangeDate(endDate),
+					endTime: toDateRangeTime(endDate),
+					startDate: toDateRangeDate(startDate),
+					startTime: toDateRangeTime(startDate),
+				}
+			);
+
+		await apiHelpers.delete(
+			`${apiHelpers.baseUrl}${applicationName}/${objectEntry.id}`
+		);
+
+		await apiHelpers.delete(
+			`${apiHelpers.baseUrl}functional-cookies-entries/${cookiesObjectEntries.items[0].id}`
+		);
+
+		await companyExportImportPage.import(
+			functionalCookieEntriesExportFilePath
+		);
+
+		const importedCookiesObjectEntries = await apiHelpers.get(
+			`${apiHelpers.baseUrl}functional-cookies-entries/`
+		);
+
+		const importedCustomObjectEntries = await apiHelpers.get(
+			`${apiHelpers.baseUrl}c/tests/`
+		);
+
+		expect(importedCookiesObjectEntries.items.length).toBe(20);
+
+		expect(importedCustomObjectEntries.items.length).toBe(0);
+	});
+
+	await test.step('Export all entries without date filter', async () => {
+		await apiHelpers.objectEntry.postObjectEntry(
+			{externalReferenceCode: '', name: 'test'},
+			'c/tests'
+		);
+
+		const allEntriesExportFilePath = await companyExportImportPage.export(
+			['Functional Cookie Entries 20 Items', 'Tests 1 Items'],
+			false,
+			{
+				rangeLast: '12 Hours',
+			}
+		);
+
+		await apiHelpers.delete(
+			`${apiHelpers.baseUrl}functional-cookies-entries/${cookiesObjectEntries.items[0].id}`
+		);
+
+		await apiHelpers.delete(
+			`${apiHelpers.baseUrl}${applicationName}/${objectEntry.id}`
+		);
+		await companyExportImportPage.import(allEntriesExportFilePath);
+
+		const importedCookiesObjectEntries = await apiHelpers.get(
+			`${apiHelpers.baseUrl}functional-cookies-entries/`
+		);
+
+		const importedCustomObjectEntries = await apiHelpers.get(
+			`${apiHelpers.baseUrl}c/tests/`
+		);
+
+		expect(importedCookiesObjectEntries.items.length).toBe(20);
+
+		expect(importedCustomObjectEntries.items.length).toBe(1);
 	});
 });
 
@@ -402,9 +519,9 @@ test(
 			.locator('table tr:first-child td:first-child')
 			.innerText();
 
-		const exportFilePath = await companyExportImportPage.export(
-			`${objectDefinition.name} 2 Items`
-		);
+		const exportFilePath = await companyExportImportPage.export([
+			`${objectDefinition.name} 2 Items`,
+		]);
 
 		const applicationName =
 			'c/' + objectDefinition.name.toLowerCase() + 's';
@@ -502,9 +619,9 @@ test(
 			.locator('table tr:first-child td:first-child')
 			.innerText();
 
-		const exportFilePath = await companyExportImportPage.export(
-			`${objectDefinition.name} 2 Items`
-		);
+		const exportFilePath = await companyExportImportPage.export([
+			`${objectDefinition.name} 2 Items`,
+		]);
 
 		const applicationName =
 			'c/' + objectDefinition.name.toLowerCase() + 's';
@@ -606,9 +723,9 @@ test(
 			.locator('table tr:first-child td:first-child')
 			.innerText();
 
-		const exportFilePath = await companyExportImportPage.export(
-			`${objectDefinition.name} 2 Items`
-		);
+		const exportFilePath = await companyExportImportPage.export([
+			`${objectDefinition.name} 2 Items`,
+		]);
 
 		const applicationName =
 			'c/' + objectDefinition.name.toLowerCase() + 's';
@@ -824,9 +941,9 @@ test('can import many to many entries', async ({
 		expect(objectEntry[objectRelationship.name].length).toBe(2);
 	});
 
-	const exportFilePath1 = await companyExportImportPage.export(
-		`${objectDefinition1.name} 3 Items`
-	);
+	const exportFilePath1 = await companyExportImportPage.export([
+		`${objectDefinition1.name} 3 Items`,
+	]);
 
 	await test.step("relate objectDefinition1ObjectEntry3 to objectDefinition2ObjectEntry1 and assert it's persistence", async () => {
 		await apiHelpers.objectEntry.putByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
@@ -851,9 +968,9 @@ test('can import many to many entries', async ({
 		expect(objectEntry[objectRelationship.name].length).toBe(3);
 	});
 
-	const exportFilePath2 = await companyExportImportPage.export(
-		`${objectDefinition1.name} 3 Items`
-	);
+	const exportFilePath2 = await companyExportImportPage.export([
+		`${objectDefinition1.name} 3 Items`,
+	]);
 
 	await test.step("import object entry where objectDefinition1ObjectEntry3 was still unrelated and assert it's persistence", async () => {
 		await companyExportImportPage.import(exportFilePath1);
@@ -921,8 +1038,9 @@ test('can only import custom object entries when their definitions are already i
 		'c/tests'
 	);
 
-	const exportFilePath =
-		await companyExportImportPage.export('Tests 1 Items');
+	const exportFilePath = await companyExportImportPage.export([
+		'Tests 1 Items',
+	]);
 
 	objectActionAPIClient.deleteObjectDefinition(objectDefinition.id);
 
@@ -972,8 +1090,9 @@ test('can see corresponding elements at instance level', async ({
 		'c/tests'
 	);
 
-	const exportFilePath =
-		await companyExportImportPage.export('Tests 1 Items');
+	const exportFilePath = await companyExportImportPage.export([
+		'Tests 1 Items',
+	]);
 
 	await companyExportImportPage.page.goto('/');
 
