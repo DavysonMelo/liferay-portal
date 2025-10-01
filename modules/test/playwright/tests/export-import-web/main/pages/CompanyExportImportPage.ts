@@ -74,20 +74,20 @@ export class CompanyExportImportPage {
 		if (dateOptions?.endDate || dateOptions?.startDate) {
 			await this.rangeDateRangeRadioButton.check();
 
-			if (dateOptions.endDate) {
-				await this.rangeDateRangeEndDate.fill(dateOptions.endDate);
-			}
-
-			if (dateOptions.endTime) {
-				await this.rangeDateRangeEndTime.fill(dateOptions.endTime);
-			}
-
 			if (dateOptions.startDate) {
 				await this.rangeDateRangeStartDate.fill(dateOptions.startDate);
 			}
 
+			if (dateOptions.endDate) {
+				await this.rangeDateRangeEndDate.fill(dateOptions.endDate);
+			}
+
 			if (dateOptions.startTime) {
 				await this.rangeDateRangeStartTime.fill(dateOptions.startTime);
+			}
+
+			if (dateOptions.endTime) {
+				await this.rangeDateRangeEndTime.fill(dateOptions.endTime);
 			}
 		}
 		else if (dateOptions?.rangeLast) {
