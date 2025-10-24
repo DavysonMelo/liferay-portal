@@ -159,6 +159,20 @@ export class ViewObjectEntriesPage {
 		await this.editObjectEntryForm.waitFor({state: 'visible'});
 	}
 
+	async createSimpleObjectEntryThroughUI({
+        fieldName,
+        fieldValue,
+        objectDefinitionLabel,
+    }: {
+        fieldName: string;
+        fieldValue: string;
+        objectDefinitionLabel: string;
+    }) {
+        await this.clickAddObjectEntry(objectDefinitionLabel);
+        await this.page.getByLabel(fieldName).fill(fieldValue);
+        await this.saveObjectEntryButton.click();
+    }
+
 	async fillObjectEntry({
 		objectFieldBusinessType,
 		objectFieldLabel,
