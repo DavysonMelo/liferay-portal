@@ -13,6 +13,7 @@ export class ViewObjectActionsPage {
 	readonly frontendDataSetItems: Locator;
 	readonly lastExecutionCell: Locator;
 	readonly viewObjectDefinitionsPage: ViewObjectDefinitionsPage;
+	readonly page: Page;
 
 	constructor(page: Page) {
 		this.actionsTabItem = page.getByRole('link', {name: 'Actions'});
@@ -22,6 +23,7 @@ export class ViewObjectActionsPage {
 		this.frontendDataSetItems = page.locator('div.table-list-title a');
 		this.lastExecutionCell = page.locator('.cell-status');
 		this.viewObjectDefinitionsPage = new ViewObjectDefinitionsPage(page);
+		this.page = page;
 	}
 
 	async goto(objectDefinitionLabel: string) {
@@ -32,6 +34,10 @@ export class ViewObjectActionsPage {
 		);
 
 		await this.actionsTabItem.click();
+	}
+
+	async openExistingObjectAction(objectActionName: string) {
+		await this.page.getByRole('link', {name: objectActionName}).click();
 	}
 
 	async openObjectActionSidePanel() {
