@@ -192,6 +192,101 @@ test.describe('Manage object actions through object actions tab', () => {
 			editObjectActionPage.userPreferredLanguage
 		).not.toBeChecked();
 	});
+
+	test('can edit a previously saved expression', async ({
+		editObjectActionPage,
+		page,
+		viewObjectActionsPage,
+		viewObjectEntriesPage,
+	}) => {
+		await viewObjectActionsPage.goto(
+			createdObjectDefinition.label['en_US']
+		);
+
+		await viewObjectActionsPage.openObjectActionSidePanel();
+
+		await editObjectActionPage.actionLabelInput.fill('Custom Action');
+
+		await editObjectActionPage.actionBuilderTab.click();
+
+		await editObjectActionPage.inputWhenCombo.click();
+
+		await editObjectActionPage.iframeLocator
+			.getByRole('option', {name: 'On After Add'})
+			.click();
+
+		await editObjectActionPage.inputThenCombo.click();
+		await editObjectActionPage.iframeLocator
+			.getByRole('option', {name: 'Add an Object Entry'})
+			.click();
+
+		await editObjectActionPage.inputOnCombo.click();
+		await editObjectActionPage.iframeLocator
+			.getByRole('option', {name: createdObjectDefinition.label['en_US']})
+			.click();
+
+		await editObjectActionPage.iframeLocator
+			.getByLabel('Add Fields')
+			.click();
+
+		await page.getByLabel('textField').check();
+
+		await page.getByRole('button', {name: 'Save'}).click();
+
+		await editObjectActionPage.iframeLocator
+			.getByLabel('Input as a value.')
+			.check();
+
+		await editObjectActionPage.iframeLocator
+			.getByPlaceholder('Input a value.')
+			.fill('Action Entry');
+
+		await editObjectActionPage.saveButton.click();
+
+		await viewObjectEntriesPage.goto(createdObjectDefinition.className);
+
+		await viewObjectEntriesPage.createSimpleObjectEntryThroughUI({
+			fieldName: 'textField',
+			fieldValue: 'Initial Entry',
+			objectDefinitionLabel: createdObjectDefinition.label['en_US'],
+		});
+
+		await waitForAlert(page);
+
+		await viewObjectEntriesPage.backButton.click();
+
+		await expect(page.getByText('Action Entry')).toBeVisible();
+
+		await viewObjectActionsPage.goto(
+			createdObjectDefinition.label['en_US']
+		);
+
+		await viewObjectActionsPage.openExistingObjectAction('Custom Action');
+
+		await editObjectActionPage.actionBuilderTab.click();
+
+		await editObjectActionPage.iframeLocator
+			.getByPlaceholder('Input a value.')
+			.fill('Action Entry Edited');
+
+		await editObjectActionPage.saveButton.click();
+
+		await viewObjectEntriesPage.goto(createdObjectDefinition.className);
+
+		await page
+			.getByLabel(`Add ${createdObjectDefinition.label['en_US']}`)
+			.click();
+
+		await page.getByLabel('textField').fill('Initial Entry');
+
+		await page.getByRole('button', {name: 'Save'}).click();
+
+		await waitForAlert(page);
+
+		await viewObjectEntriesPage.backButton.click();
+
+		await expect(page.getByText('Action Entry Edited')).toBeVisible();
+	});
 });
 
 test('can send notification email via download action', async ({
