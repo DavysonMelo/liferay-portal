@@ -13,6 +13,7 @@ export class EditObjectActionPage {
 	readonly checkbox: Locator;
 	readonly iframeLocator: FrameLocator;
 	readonly inputNotificationsCombo: Locator;
+	readonly inputOnCombo: Locator;
 	readonly inputThenCombo: Locator;
 	readonly inputWhenCombo: Locator;
 	readonly optionNotification: Locator;
@@ -42,6 +43,10 @@ export class EditObjectActionPage {
 			.frameLocator('iframe')
 			.getByRole('combobox')
 			.getByText('Choose a Trigger');
+		this.inputOnCombo = page
+			.frameLocator('iframe')
+			.getByRole('combobox')
+			.getByText('Choose an Object');
 		this.optionNotification = page
 			.frameLocator('iframe')
 			.getByRole('option', {name: 'Notification'});
