@@ -3,7 +3,19 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {ButtonView, ContextualBalloon, Plugin} from 'ckeditor5';
+import {Command, Plugin} from '@ckeditor/ckeditor5-core/dist/index.js';
+
+// import {ButtonView, Command, ContextualBalloon, Plugin} from '@ckeditor/ckeditor5';
+
+import {
+	ButtonView,
+	ContextualBalloon,
+} from '@ckeditor/ckeditor5-ui/dist/index.js';
+
+import { createRoot } from 'react-dom/client';
+import { createElement } from 'react';
+
+import AiDropdown from '../AiDropdown/AiDropdown';
 
 export default class AIDropdownActions extends Plugin {
 	private _buttonView?: ButtonView;
@@ -13,6 +25,10 @@ export default class AIDropdownActions extends Plugin {
 	}
 	init() {
 		const editor = this.editor;
+		const commandName = 'aidropdownActions';
+
+		editor.commands.add(commandName, new Command(editor));
+
 		const model = editor.model;
 		const view = editor.editing.view;
 		const balloon = editor.plugins.get(ContextualBalloon);
@@ -46,22 +62,15 @@ export default class AIDropdownActions extends Plugin {
 		if (this._buttonView && balloon.hasView(this._buttonView)) {
 			return;
 		}
-
-		const buttonView = (this._buttonView = new ButtonView());
-		buttonView.set({
-			label: 'Do something',
-			tooltip: true,
-			withText: true,
-		});
-
-		buttonView.on('execute', () => {
-			alert(`Selected text: ${selectedText}`);
-			this._hideBalloon(balloon);
-		});
+        const container = document.createElement('div');
+        container.classList.add('custom-react-balloon');
+        
+		const root = createRoot(container);
+		root.render(createElement(AiDropdown, {selectedText}));
 
 		balloon.add({
 			position: this._getBalloonPosition(editor),
-			view: buttonView,
+			view: container,
 		});
 	}
 
