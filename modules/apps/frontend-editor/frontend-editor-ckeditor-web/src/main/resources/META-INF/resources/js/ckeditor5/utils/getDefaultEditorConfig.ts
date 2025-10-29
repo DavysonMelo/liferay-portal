@@ -48,6 +48,7 @@ import {BlockToolbar} from '@ckeditor/ckeditor5-ui/dist/index.js';
 import {sub} from 'frontend-js-web';
 
 import AICreator from '../plugins/AICreator';
+import AIDropdownActions from '../plugins/AIDropdownActions';
 import HeadlessItemSelector from '../plugins/HeadlessItemSelector';
 import ItemSelector from '../plugins/ItemSelector';
 import WriteAssistent from '../plugins/WriteAssistent/WriteAssistent';
@@ -149,6 +150,7 @@ const getDefaultEditorConfig = ({
 		TableCaption,
 		TableProperties,
 		TableToolbar,
+		AIDropdownActions
 	];
 
 	if (editorVariant === EEditorVariant.CLASSIC) {
