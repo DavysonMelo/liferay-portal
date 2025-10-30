@@ -4,21 +4,17 @@
  */
 
 import {Command, Plugin} from '@ckeditor/ckeditor5-core/dist/index.js';
-
-// import {ButtonView, Command, ContextualBalloon, Plugin} from '@ckeditor/ckeditor5';
-
 import {
-	ButtonView,
-	ContextualBalloon,
+	ContextualBalloon, View
 } from '@ckeditor/ckeditor5-ui/dist/index.js';
-
-import { createRoot } from 'react-dom/client';
-import { createElement } from 'react';
+import React from 'react';
+import {Root, createRoot} from 'react-dom/client';
 
 import AiDropdown from '../AiDropdown/AiDropdown';
 
 export default class AIDropdownActions extends Plugin {
-	private _buttonView?: ButtonView;
+    private _balloonView: View | null = null;
+	private _reactRoot: Root | null = null;
 
 	static get requires() {
 		return [ContextualBalloon];
@@ -59,24 +55,38 @@ export default class AIDropdownActions extends Plugin {
 		balloon: ContextualBalloon,
 		editor: any
 	) {
-		if (this._buttonView && balloon.hasView(this._buttonView)) {
+		if (this._balloonView && balloon.hasView(this._balloonView)) {
 			return;
 		}
-        const container = document.createElement('div');
-        container.classList.add('custom-react-balloon');
-        
-		const root = createRoot(container);
-		root.render(createElement(AiDropdown, {selectedText}));
+
+		const reactView = new View();
+
+		reactView.setTemplate({
+			attributes: {
+				class: 'custom-react-balloon',
+			},
+			tag: 'div',
+		});
+
+		reactView.once('render', () => {
+			if (!reactView.element) {return;}
+
+			const root = createRoot(reactView.element);
+			root.render(<AiDropdown selectedText={selectedText} />);
+			this._reactRoot = root;
+		});
+
+		this._balloonView = reactView;
 
 		balloon.add({
 			position: this._getBalloonPosition(editor),
-			view: container,
+			view: this._balloonView,
 		});
 	}
 
 	_hideBalloon(balloon: ContextualBalloon) {
-		if (this._buttonView && balloon.hasView(this._buttonView)) {
-			balloon.remove(this._buttonView);
+		if (this._balloonView && balloon.hasView(this._balloonView)) {
+			balloon.remove(this._balloonView);
 		}
 	}
 
