@@ -150,7 +150,7 @@ const getDefaultEditorConfig = ({
 		TableCaption,
 		TableProperties,
 		TableToolbar,
-		AIDropdownActions
+		AIDropdownActions,
 	];
 
 	if (editorVariant === EEditorVariant.CLASSIC) {
