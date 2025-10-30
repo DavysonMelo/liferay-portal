@@ -1,0 +1,33 @@
+@import 'atlas-variables';
+
+.ai-dropdown {
+  display: flex;
+  flex-direction: column;
+  height: 21rem;
+  width: 15rem;
+  padding: 1rem 0;
+
+  border: 1px solid red;
+}
+
+.suggested-group {
+  
+}
+
+.suggested-group span {
+  font-size: 12px;
+  line-height: 2rem;
+  margin-left: 1rem;
+}
+
+.ai-dropdown-item {
+  flex: 1;
+  line-height: 2rem;
+  font-size: 14px;
+  cursor: pointer;
+  padding-left: 1rem;
+}
+
+.ai-dropdown-item:hover {
+  background: #F0F5FF;
+}

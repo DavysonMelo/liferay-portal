@@ -5,6 +5,10 @@
 
 import React from "react";
 
+import AIDropdownItem from "./components/AIDropdownItem";
+
+import './aiDropdown.scss';
+
 const AiDropdown: React.FC<{ selectedText: string }> = ({ selectedText }) => {
 
     function handleAIAction() {
@@ -13,13 +17,21 @@ const AiDropdown: React.FC<{ selectedText: string }> = ({ selectedText }) => {
         alert(`AI Action triggered for text: ${selectedText}`);
     }
 
+    const suggestedDropdownItems = [
+        { label: "AI Action 1" },
+        { label: "AI Action 2" },
+        { label: "AI Action 3" },
+    ];
+
     return (
-        <div>
-            <ul>
-                <li>
-                    <button onClick={handleAIAction}>AI Action</button>
-                </li>           
-            </ul>
+        <div className="ai-dropdown">
+            <div className="suggested-group">
+                <span>SUGGESTED</span>
+
+                {suggestedDropdownItems.map((item, index) => (
+                    <AIDropdownItem item={item} key={index} />
+                ))}
+            </div>
         </div>
     );
 }
