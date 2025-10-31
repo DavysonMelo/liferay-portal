@@ -14,9 +14,9 @@ import '../../../css/ckeditor5/editor.scss'
 const AiDropdown: React.FC<{ selectedText: string, setNewContent: (newText: string) => void }> = ({ selectedText, setNewContent }) => {
 
     const suggestedDropdownItems = [
-        { label: "Improve writing" },
-        { label: "AI Action 2" },
-        { label: "AI Action 3" },
+        { icon: "magic", label: "Improve writing" },
+        { icon: "check", label: "AI Action 2" },
+        { icon: "automatic-translate", label: "AI Action 3" },
     ];
 
     return (
@@ -25,7 +25,7 @@ const AiDropdown: React.FC<{ selectedText: string, setNewContent: (newText: stri
                 <span>SUGGESTED</span>
 
                 {suggestedDropdownItems.map((item, index) => (
-                    <AIDropdownItem item={item} key={index} setNewContent={setNewContent} />
+                    <AIDropdownItem icon={item.icon} key={index} label={item.label} setNewContent={setNewContent} />
                 ))}
             </div>
         </div>
