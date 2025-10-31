@@ -15,6 +15,7 @@ import AiDropdown from '../AiDropdown/AiDropdown';
 export default class AIDropdownActions extends Plugin {
     private _balloonView: View | null = null;
 	private _reactRoot: Root | null = null;
+	private _textSelection = '';
 
 	static get requires() {
 		return [ContextualBalloon];
@@ -30,19 +31,11 @@ export default class AIDropdownActions extends Plugin {
 		const balloon = editor.plugins.get(ContextualBalloon);
 
 		view.document.on('mouseup', () => {
-			const selection = model.document.selection;
-			let text = '';
+			this._selectText(model);
+			
 
-			for (const range of selection.getRanges()) {
-				for (const item of range.getItems()) {
-					if (item.is && item.is('model:$textProxy')) {
-						text += (item as any).data;
-					}
-				}
-			}
-
-			if (text.trim().length) {
-				this._showBalloon(text, balloon, editor);
+			if (this._textSelection.trim().length) {
+				this._showBalloon(this._textSelection, balloon, editor);
 			}
 			else {
 				this._hideBalloon(balloon);
@@ -72,7 +65,7 @@ export default class AIDropdownActions extends Plugin {
 			if (!reactView.element) {return;}
 
 			const root = createRoot(reactView.element);
-			root.render(<AiDropdown selectedText={selectedText} />);
+			root.render(<AiDropdown selectedText={selectedText} setNewContent={this._changeText.bind(this)} />);
 			this._reactRoot = root;
 		});
 
@@ -98,5 +91,56 @@ export default class AIDropdownActions extends Plugin {
 		);
 
 		return {target: domRange};
+	}
+
+	_selectText(model: any) {
+		const selection = model.document.selection;
+			this._textSelection = '';
+
+			for (const range of selection.getRanges()) {
+				for (const item of range.getItems()) {
+					if (item.is && item.is('model:$textProxy')) {
+						this._textSelection += (item as any).data;
+					}
+				}
+			}
+	}
+
+	_changeText(newText: string,) {
+		const editor = this.editor;
+		const model = editor.model;
+		const view = editor.editing.view;
+		
+		model.change((writer: any) => {
+			const selection = model.document.selection;
+			const range = selection.getFirstRange();
+
+			if (!range) {
+				return;
+			}
+
+			writer.remove(range);
+
+			const insertPosition = range.start;
+			writer.insertText(newText, insertPosition);
+
+			const endPosition = writer.createPositionAt(
+				insertPosition.parent,
+				insertPosition.offset + newText.length
+			);
+			const newRange = writer.createRange(insertPosition, endPosition);
+
+			writer.setSelection(newRange);
+		});
+
+		view.scrollToTheSelection();
+
+		editor.editing.view.change((viewWriter: any) => {
+			viewWriter.focus();
+		});
+
+		// const editorContent = this.editor.getData();
+
+		// this.editor.setData(editorContent.replaceAll(this._textSelection, newText));
 	}
 }
