@@ -133,11 +133,9 @@ export default class AIDropdownActions extends Plugin {
 			writer.setSelection(newRange);
 		});
 
-		view.scrollToTheSelection();
+		view.focus();
 
-		editor.editing.view.change((viewWriter: any) => {
-			viewWriter.focus();
-		});
+		view.scrollToTheSelection();
 
 		// const editorContent = this.editor.getData();
 
