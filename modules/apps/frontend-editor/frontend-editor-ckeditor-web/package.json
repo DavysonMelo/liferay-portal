@@ -68,7 +68,6 @@
 		"@liferay/frontend-data-set-web": "*",
 		"@liferay/frontend-js-item-selector-web": "*",
 		"@liferay/frontend-js-state-web": "*",
-		"@clayui/icon": "3.144.1",
 		"ckeditor4": "4.22.1",
 		"ckeditor4-react": "1.4.2",
 		"ckeditor5": "46.0.2",
