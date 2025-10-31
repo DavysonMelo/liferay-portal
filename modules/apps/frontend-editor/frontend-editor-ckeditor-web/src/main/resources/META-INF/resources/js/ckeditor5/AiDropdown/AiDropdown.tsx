@@ -7,18 +7,14 @@ import React from "react";
 
 import AIDropdownItem from "./components/AIDropdownItem";
 
-import './aiDropdown.scss';
+import './ai-dropdown-actions.scss';
 
-const AiDropdown: React.FC<{ selectedText: string }> = ({ selectedText }) => {
+import '../../../css/ckeditor5/editor.scss'
 
-    function handleAIAction() {
-        // Implement AI action logic here, e.g., call an AI service with selectedText
-
-        alert(`AI Action triggered for text: ${selectedText}`);
-    }
+const AiDropdown: React.FC<{ selectedText: string, setNewContent: (newText: string) => void }> = ({ selectedText, setNewContent }) => {
 
     const suggestedDropdownItems = [
-        { label: "AI Action 1" },
+        { label: "Improve writing" },
         { label: "AI Action 2" },
         { label: "AI Action 3" },
     ];
@@ -29,7 +25,7 @@ const AiDropdown: React.FC<{ selectedText: string }> = ({ selectedText }) => {
                 <span>SUGGESTED</span>
 
                 {suggestedDropdownItems.map((item, index) => (
-                    <AIDropdownItem item={item} key={index} />
+                    <AIDropdownItem item={item} key={index} setNewContent={setNewContent} />
                 ))}
             </div>
         </div>
