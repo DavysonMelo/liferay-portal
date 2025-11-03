@@ -30,7 +30,7 @@ export default class AIDropdownActions extends Plugin {
 		const view = editor.editing.view;
 		const balloon = editor.plugins.get(ContextualBalloon);
 
-		view.document.on('mouseup', () => {
+		model.document.selection.on('change:range', () => {
 			this._selectText(model);
 			
 
