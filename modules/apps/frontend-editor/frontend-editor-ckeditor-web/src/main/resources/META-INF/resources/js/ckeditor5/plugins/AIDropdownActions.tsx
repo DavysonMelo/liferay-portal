@@ -7,10 +7,12 @@ import {Command, Plugin} from '@ckeditor/ckeditor5-core/dist/index.js';
 import {
 	ContextualBalloon, View
 } from '@ckeditor/ckeditor5-ui/dist/index.js';
+import { Model } from 'ckeditor5';
 import React from 'react';
 import {Root, createRoot} from 'react-dom/client';
 
 import AiDropdown from '../AiDropdown/AiDropdown';
+import WriteAssistentConfirmation from '../AiDropdown/WriteAssistentConfimation';
 
 export default class AIDropdownActions extends Plugin {
     private _balloonView: View | null = null;
@@ -27,8 +29,15 @@ export default class AIDropdownActions extends Plugin {
 		editor.commands.add(commandName, new Command(editor));
 
 		const model = editor.model;
-		const view = editor.editing.view;
 		const balloon = editor.plugins.get(ContextualBalloon);
+
+		editor.conversion.for('editingDowncast').markerToHighlight({
+			model: 'aiHighlight',
+			view: {
+				classes: 'ai-highlight',
+				priority: 10,
+			},
+		});
 
 		model.document.selection.on('change:range', () => {
 			this._selectText(model);
@@ -110,6 +119,9 @@ export default class AIDropdownActions extends Plugin {
 		const editor = this.editor;
 		const model = editor.model;
 		const view = editor.editing.view;
+		const balloon = editor.plugins.get(ContextualBalloon);
+
+		const oldText = this._textSelection;
 		
 		model.change((writer: any) => {
 			const selection = model.document.selection;
@@ -130,15 +142,83 @@ export default class AIDropdownActions extends Plugin {
 			);
 			const newRange = writer.createRange(insertPosition, endPosition);
 
-			writer.setSelection(newRange);
+			writer.setSelection(endPosition);
+
+			writer.addMarker('aiHighlight', {
+			affectsData: false,
+			range: newRange,
+			usingOperation: false,
+		});
 		});
 
 		view.focus();
 
 		view.scrollToTheSelection();
 
-		// const editorContent = this.editor.getData();
+		this._hideBalloon(balloon);
 
-		// this.editor.setData(editorContent.replaceAll(this._textSelection, newText));
+		this._showConfimationBalloon(balloon, editor, newText, oldText);
+	}
+
+	_showConfimationBalloon(
+		balloon: ContextualBalloon,
+		editor: any,
+		newText: string,
+		oldText: string
+	) {
+		if (this._balloonView && balloon.hasView(this._balloonView)) {
+			return;
+		}
+
+		const reactView = new View();
+
+		reactView.setTemplate({
+			attributes: {
+				class: 'custom-react-balloon',
+			},
+			tag: 'div',
+		});
+
+		reactView.once('render', () => {
+			if (!reactView.element) {return;}
+
+			const root = createRoot(reactView.element);
+			root.render(
+				<WriteAssistentConfirmation
+					acceptFunction={() => {
+						this._removeMarker(editor.model);
+						this._hideConfirmationBalloon(balloon);
+					}} 
+					discardFunction={() => {
+						this._removeMarker(editor.model);
+						editor.execute('undo');
+						this._hideBalloon(balloon);
+					}} 
+				/>
+			)
+			this._reactRoot = root;
+		});
+
+		this._balloonView = reactView;
+
+		balloon.add({
+			position: this._getBalloonPosition(editor),
+			view: this._balloonView,
+		});
+	}
+
+	_hideConfirmationBalloon (balloon: ContextualBalloon) {
+		if (this._balloonView && balloon.hasView(this._balloonView)) {
+			balloon.remove(this._balloonView);
+		}
+	}
+
+	_removeMarker(model: Model) {
+		model.change((writer: any) => {
+			const marker = model.markers.get('aiHighlight');
+			if (marker) {
+				writer.removeMarker('aiHighlight');
+			}
+		});
 	}
 }
