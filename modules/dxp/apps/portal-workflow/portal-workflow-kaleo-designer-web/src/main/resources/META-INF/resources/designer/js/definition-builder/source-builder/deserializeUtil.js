@@ -116,6 +116,12 @@ DeserializeUtil.prototype = {
 
 				if (type === 'llm') {
 					data.prompt = node.prompt || '';
+					data.inputVariables = node['input-variables']
+						? JSON.parse(node['input-variables'])
+						: {};
+					data.outputVariables = node['output-variables']
+						? JSON.parse(node['output-variables'])
+						: {};
 				}
 
 				data.actions = node.actions?.length && parseActions(node);

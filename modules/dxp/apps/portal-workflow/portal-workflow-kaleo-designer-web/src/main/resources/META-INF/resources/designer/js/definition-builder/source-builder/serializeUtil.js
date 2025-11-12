@@ -699,6 +699,18 @@ function serializeDefinition(xmlNamespace, metadata, nodes, transitions) {
 
 		if (item.type === 'llm' && prompt) {
 			buffer.push(XMLUtil.create('prompt', cdata(prompt)));
+			buffer.push(
+				XMLUtil.create(
+					'input-variables',
+					cdata(jsonStringify(item.data.inputVariables))
+				)
+			);
+			buffer.push(
+				XMLUtil.create(
+					'output-variables',
+					cdata(jsonStringify(item.data.outputVariables))
+				)
+			);
 		}
 
 		const nodeTransitions = transitions.filter(
