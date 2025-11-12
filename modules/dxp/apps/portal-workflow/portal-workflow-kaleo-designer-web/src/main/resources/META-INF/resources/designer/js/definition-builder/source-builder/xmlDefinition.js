@@ -360,6 +360,7 @@ XMLDefinition.prototype = {
 			resultFields: [
 				'description',
 				'id',
+				'input-variables',
 				'initial',
 				{
 					key: 'labels',
@@ -371,6 +372,7 @@ XMLDefinition.prototype = {
 					key: 'prompt',
 					locator: 'prompt',
 				},
+				'output-variables',
 				'script',
 				{
 					key: 'scriptLanguage',
