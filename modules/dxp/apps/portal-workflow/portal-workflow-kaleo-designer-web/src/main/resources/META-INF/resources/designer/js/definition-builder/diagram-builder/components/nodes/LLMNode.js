@@ -10,7 +10,14 @@ import {defaultLanguageId} from '../../../constants';
 import BaseNode from './BaseNode';
 
 export default function LLMNode({
-	data: {description, label, newNode, prompt} = {},
+	data: {
+		description,
+		inputVariables,
+		label,
+		newNode,
+		outputVariables,
+		prompt,
+	} = {},
 	descriptionSidebar,
 	id,
 	...otherProps
@@ -27,9 +34,11 @@ export default function LLMNode({
 			descriptionSidebar={descriptionSidebar}
 			icon="stars"
 			id={id}
+			inputVariables={inputVariables}
 			label={label}
 			newNode={newNode}
 			nodeTypeClassName="llm-node"
+			outputVariables={outputVariables}
 			prompt={prompt}
 			type="llm"
 			{...otherProps}
