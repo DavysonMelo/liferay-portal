@@ -7,6 +7,7 @@ import {v4 as uuidv4} from 'uuid';
 
 import {defaultLanguageId} from '../../../constants';
 import {insertNodeAt} from '../../util/insertNodeAt';
+import AIDecisionNode from './AIDecisionNode';
 import ConditionNode from './ConditionNode';
 import ForkNode from './ForkNode';
 import JoinNode from './JoinNode';
@@ -39,6 +40,9 @@ const defaultNodes = [
 ];
 
 const nodeDescription = {
+	'ai-decision': Liferay.Language.get(
+		'make-a-decision-using-artificial-intelligence'
+	),
 	'condition': Liferay.Language.get('execute-conditional-logic'),
 	'end': Liferay.Language.get('conclude-the-workflow'),
 	'fork': Liferay.Language.get('split-the-workflow-into-multiple-paths'),
