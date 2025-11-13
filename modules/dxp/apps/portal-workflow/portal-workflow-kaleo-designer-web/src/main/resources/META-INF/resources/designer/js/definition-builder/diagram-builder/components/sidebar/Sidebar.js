@@ -29,6 +29,11 @@ export const contents = {
 		showDeleteButton: true,
 		title: Liferay.Language.get('actions'),
 	},
+	'ai-decision': {
+		sections: ['nodeInformation', 'promptSummary'],
+		showDeleteButton: true,
+		title: Liferay.Language.get('ai-decision'),
+	},
 	'assignments': {
 		backButton: (setContentName) => () => setContentName('task'),
 		deleteFunction: (setSelectedItem) => () =>

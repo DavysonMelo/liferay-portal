@@ -10,7 +10,14 @@ import {defaultLanguageId} from '../../../constants';
 import BaseNode from './BaseNode';
 
 export default function AIDecisionNode({
-	data: {description, label, newNode} = {},
+	data: {
+		description,
+		inputVariables,
+		label,
+		newNode,
+		outputVariables,
+		prompt,
+	} = {},
 	descriptionSidebar,
 	id,
 	...otherProps
@@ -27,9 +34,12 @@ export default function AIDecisionNode({
 			descriptionSidebar={descriptionSidebar}
 			icon="diamond"
 			id={id}
+			inputVariables={inputVariables}
 			label={label}
 			newNode={newNode}
 			nodeTypeClassName="ai-decision"
+			outputVariables={outputVariables}
+			prompt={prompt}
 			type="ai-decision"
 			{...otherProps}
 		/>
