@@ -19,6 +19,7 @@ const COL_TYPES_ASSIGNMENT = [
 	'userId',
 ];
 const COL_TYPES_FIELD = [
+	'ai-decision',
 	'condition',
 	'fork',
 	'join',
