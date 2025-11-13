@@ -697,7 +697,10 @@ function serializeDefinition(xmlNamespace, metadata, nodes, transitions) {
 			);
 		}
 
-		if (item.type === 'llm' && prompt) {
+		if (
+			(item.type === 'llm' && prompt) ||
+			(item.type === 'ai-decision' && prompt)
+		) {
 			buffer.push(XMLUtil.create('prompt', cdata(prompt)));
 			buffer.push(
 				XMLUtil.create(

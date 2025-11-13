@@ -114,7 +114,7 @@ DeserializeUtil.prototype = {
 						node.scriptLanguage || DEFAULT_LANGUAGE;
 				}
 
-				if (type === 'llm') {
+				if (type === 'llm' || type === 'ai-decision') {
 					data.prompt = node.prompt || '';
 					data.inputVariables = node['input-variables']
 						? JSON.parse(node['input-variables'])
