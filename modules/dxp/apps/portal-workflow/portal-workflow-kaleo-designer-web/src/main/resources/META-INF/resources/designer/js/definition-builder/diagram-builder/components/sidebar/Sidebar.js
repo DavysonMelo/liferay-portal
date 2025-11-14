@@ -68,6 +68,11 @@ export const contents = {
 		showDeleteButton: true,
 		title: Liferay.Language.get('join-xor-node'),
 	},
+	'llm': {
+		sections: ['nodeInformation', 'promptSummary'],
+		showDeleteButton: true,
+		title: Liferay.Language.get('llm-node'),
+	},
 	'notifications': {
 		backButton: (setContentName, selectedItemType) => () =>
 			setContentName(selectedItemType),
