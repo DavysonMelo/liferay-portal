@@ -6,6 +6,7 @@
 import {v4 as uuidv4} from 'uuid';
 
 import {defaultLanguageId} from '../../../constants';
+import {insertNodeAt} from '../../util/insertNodeAt';
 import ConditionNode from './ConditionNode';
 import ForkNode from './ForkNode';
 import JoinNode from './JoinNode';
@@ -49,16 +50,19 @@ const nodeDescription = {
 	'task': Liferay.Language.get('ask-a-user-to-work-on-the-item'),
 };
 
-const nodeTypes = {
+let nodeTypes = {
 	'condition': ConditionNode,
 	'end': EndNode,
 	'fork': ForkNode,
 	'join': JoinNode,
 	'join-xor': JoinXorNode,
-	'llm': LLMNode,
 	'start': StartNode,
 	'state': StateNode,
 	'task': TaskNode,
 };
+
+if (Liferay.FeatureFlags['LPD-62272']) {
+	nodeTypes = insertNodeAt(nodeTypes, 'llm', LLMNode, 4);
+}
 
 export {defaultNodes, nodeDescription, nodeTypes};

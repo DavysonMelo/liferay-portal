@@ -23,10 +23,14 @@ const COL_TYPES_FIELD = [
 	'fork',
 	'join',
 	'join-xor',
-	'llm',
 	'state',
 	'task',
 ];
+
+if (Liferay.FeatureFlags['LPD-62272'] === true) {
+	COL_TYPES_FIELD.splice(4, 0, 'llm');
+}
+
 const DEFAULT_LANGUAGE = 'groovy';
 const STR_BLANK = '';
 const STR_CDATA_CLOSE = ']]>';
