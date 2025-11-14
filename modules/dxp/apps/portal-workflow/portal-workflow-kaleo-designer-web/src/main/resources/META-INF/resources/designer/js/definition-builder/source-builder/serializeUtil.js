@@ -701,7 +701,6 @@ function serializeDefinition(xmlNamespace, metadata, nodes, transitions) {
 			(item.type === 'llm' && prompt) ||
 			(item.type === 'ai-decision' && prompt)
 		) {
-			buffer.push(XMLUtil.create('prompt', cdata(prompt)));
 			buffer.push(
 				XMLUtil.create(
 					'input-variables',
@@ -714,9 +713,7 @@ function serializeDefinition(xmlNamespace, metadata, nodes, transitions) {
 					cdata(jsonStringify(item.data.outputVariables))
 				)
 			);
-			buffer.push(
-				XMLUtil.create('user-message', cdata(item.data.userMessage))
-			);
+			buffer.push(XMLUtil.create('prompt', cdata(prompt)));
 		}
 
 		const nodeTransitions = transitions.filter(
@@ -724,6 +721,15 @@ function serializeDefinition(xmlNamespace, metadata, nodes, transitions) {
 		);
 
 		appendXMLTransitions(buffer, nodeTransitions);
+
+		if (
+			(item.type === 'llm' && prompt) ||
+			(item.type === 'ai-decision' && prompt)
+		) {
+			buffer.push(
+				XMLUtil.create('user-message', cdata(item.data.userMessage))
+			);
+		}
 
 		buffer.push(xmlNode.close);
 	});
