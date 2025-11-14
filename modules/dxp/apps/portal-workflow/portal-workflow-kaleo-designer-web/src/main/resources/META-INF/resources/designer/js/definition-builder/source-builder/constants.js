@@ -19,7 +19,6 @@ const COL_TYPES_ASSIGNMENT = [
 	'userId',
 ];
 const COL_TYPES_FIELD = [
-	'ai-decision',
 	'condition',
 	'fork',
 	'join',
@@ -29,6 +28,7 @@ const COL_TYPES_FIELD = [
 ];
 
 if (Liferay.FeatureFlags['LPD-62272'] === true) {
+	COL_TYPES_FIELD.splice(0, 0, 'ai-decision');
 	COL_TYPES_FIELD.splice(4, 0, 'llm');
 }
 

@@ -66,7 +66,8 @@ let nodeTypes = {
 };
 
 if (Liferay.FeatureFlags['LPD-62272']) {
-	nodeTypes = insertNodeAt(nodeTypes, 'llm', LLMNode, 4);
+	nodeTypes = insertNodeAt(nodeTypes, 'ai-decision', AIDecisionNode, 1);
+	nodeTypes = insertNodeAt(nodeTypes, 'llm', LLMNode, 6);
 }
 
 export {defaultNodes, nodeDescription, nodeTypes};

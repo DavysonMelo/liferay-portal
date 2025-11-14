@@ -29,11 +29,6 @@ export const contents = {
 		showDeleteButton: true,
 		title: Liferay.Language.get('actions'),
 	},
-	'ai-decision': {
-		sections: ['nodeInformation', 'promptSummary'],
-		showDeleteButton: true,
-		title: Liferay.Language.get('ai-decision'),
-	},
 	'assignments': {
 		backButton: (setContentName) => () => setContentName('task'),
 		deleteFunction: (setSelectedItem) => () =>
@@ -143,6 +138,11 @@ export const contents = {
 };
 
 if (Liferay.FeatureFlags['LPD-62272']) {
+	contents['ai-decision'] = {
+		sections: ['nodeInformation', 'promptSummary'],
+		showDeleteButton: true,
+		title: Liferay.Language.get('ai-decision'),
+	};
 	contents['llm'] = {
 		sections: ['nodeInformation', 'promptSummary'],
 		showDeleteButton: true,
