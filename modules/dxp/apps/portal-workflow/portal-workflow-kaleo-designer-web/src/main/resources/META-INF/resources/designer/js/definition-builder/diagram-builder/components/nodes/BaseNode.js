@@ -42,6 +42,7 @@ export default function BaseNode({
 	targetPosition,
 	taskTimers,
 	type,
+	userMessage,
 	xPos,
 	yPos,
 	...otherProps
@@ -147,6 +148,7 @@ export default function BaseNode({
 				script,
 				scriptLanguage,
 				taskTimers,
+				userMessage,
 			},
 			id,
 			type,
@@ -217,6 +219,7 @@ export default function BaseNode({
 								script,
 								scriptLanguage,
 								taskTimers,
+								userMessage,
 							},
 							id,
 							type,
@@ -268,4 +271,5 @@ BaseNode.propTypes = {
 	outputVariables: PropTypes.object,
 	prompt: PropTypes.string,
 	type: PropTypes.string.isRequired,
+	userMessage: PropTypes.string,
 };

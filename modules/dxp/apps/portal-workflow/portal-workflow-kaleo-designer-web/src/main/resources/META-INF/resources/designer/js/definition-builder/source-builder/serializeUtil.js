@@ -711,6 +711,9 @@ function serializeDefinition(xmlNamespace, metadata, nodes, transitions) {
 					cdata(jsonStringify(item.data.outputVariables))
 				)
 			);
+			buffer.push(
+				XMLUtil.create('user-message', cdata(item.data.userMessage))
+			);
 		}
 
 		const nodeTransitions = transitions.filter(

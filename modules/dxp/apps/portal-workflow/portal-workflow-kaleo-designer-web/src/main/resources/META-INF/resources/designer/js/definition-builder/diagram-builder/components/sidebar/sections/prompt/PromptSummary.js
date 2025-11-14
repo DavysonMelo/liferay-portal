@@ -96,6 +96,28 @@ const PromptSummary = () => {
 				type="text"
 				value={outputVariablesValue}
 			/>
+
+			<label
+				className="mt-4"
+				htmlFor="workflowDefinitionBaseNodeDescription"
+			>
+				{Liferay.Language.get('user-message')}
+			</label>
+
+			<ClayInput
+				component="textarea"
+				onChange={({target}) =>
+					setSelectedItem({
+						...selectedItem,
+						data: {
+							...selectedItem.data,
+							userMessage: target.value,
+						},
+					})
+				}
+				type="text"
+				value={selectedItem?.data.userMessage ?? ''}
+			/>
 		</SidebarPanel>
 	);
 };

@@ -382,6 +382,7 @@ XMLDefinition.prototype = {
 					key: 'transitions',
 					locator: 'transitions',
 				},
+				'user-message',
 				instance.getSchemaActions(),
 				instance.getSchemaAssignments(),
 				instance.getSchemaNotifications(),

@@ -122,6 +122,7 @@ DeserializeUtil.prototype = {
 					data.outputVariables = node['output-variables']
 						? JSON.parse(node['output-variables'])
 						: {};
+					data.userMessage = node['user-message'] || '';
 				}
 
 				data.actions = node.actions?.length && parseActions(node);

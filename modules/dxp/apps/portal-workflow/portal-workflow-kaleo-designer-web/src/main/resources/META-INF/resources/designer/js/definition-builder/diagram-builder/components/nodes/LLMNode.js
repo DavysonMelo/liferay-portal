@@ -17,6 +17,7 @@ export default function LLMNode({
 		newNode,
 		outputVariables,
 		prompt,
+		userMessage,
 	} = {},
 	descriptionSidebar,
 	id,
@@ -41,6 +42,7 @@ export default function LLMNode({
 			outputVariables={outputVariables}
 			prompt={prompt}
 			type="llm"
+			userMessage={userMessage}
 			{...otherProps}
 		/>
 	);
