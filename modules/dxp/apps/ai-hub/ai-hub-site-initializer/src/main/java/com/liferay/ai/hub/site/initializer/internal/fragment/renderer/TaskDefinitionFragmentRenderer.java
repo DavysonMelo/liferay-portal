@@ -82,7 +82,7 @@ public class TaskDefinitionFragmentRenderer implements FragmentRenderer {
 	private Language _language;
 
 	@Reference(
-		target = "(osgi.web.symbolicname=com.liferay.site.cms.site.initializer)"
+		target = "(osgi.web.symbolicname=com.liferay.ai.hub.site.initializer)"
 	)
 	private ServletContext _servletContext;
 
