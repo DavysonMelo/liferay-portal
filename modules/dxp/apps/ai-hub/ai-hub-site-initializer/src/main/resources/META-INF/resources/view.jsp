@@ -11,11 +11,17 @@
 TaskDefinitionDisplayContext taskDefinitionDisplayContext = (TaskDefinitionDisplayContext)request.getAttribute(TaskDefinitionDisplayContext.class.getName());
 %>
 
-<frontend-data-set:headless-display
-	apiURL="<%= taskDefinitionDisplayContext.getAPIURL() %>"
-	creationMenu="<%= taskDefinitionDisplayContext.getCreationMenu() %>"
-	fdsActionDropdownItems="<%= taskDefinitionDisplayContext.getFDSActionDropdownItems() %>"
-	id="<%= AIHubSiteInitializerFDSNames.TASK_DEFINITION %>"
-	itemsPerPage="<%= 20 %>"
-	style="fluid"
-/>
+<div class="ml-8 mr-8 mt-5">
+	<div class="mb-6">
+		<h2>AI Tasks</h2>
+	</div>
+
+	<frontend-data-set:headless-display
+		apiURL="<%= taskDefinitionDisplayContext.getAPIURL() %>"
+		creationMenu="<%= taskDefinitionDisplayContext.getCreationMenu() %>"
+		fdsActionDropdownItems="<%= taskDefinitionDisplayContext.getFDSActionDropdownItems() %>"
+		id="<%= AIHubSiteInitializerFDSNames.TASK_DEFINITION %>"
+		itemsPerPage="<%= 20 %>"
+		style="fluid"
+	/>
+</div>
