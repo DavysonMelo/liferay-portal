@@ -9,7 +9,8 @@
 
 <%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/frontend-data-set" prefix="frontend-data-set" %><%@
-taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
+taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
+taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
 
 <%@ page import="com.liferay.ai.hub.site.initializer.internal.constants.AIHubSiteInitializerFDSNames" %><%@
 page import="com.liferay.ai.hub.site.initializer.internal.display.context.TaskDefinitionDisplayContext" %>
