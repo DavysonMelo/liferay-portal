@@ -6,6 +6,7 @@
 package com.liferay.ai.hub.rest.internal.resource.v1_0;
 
 import com.liferay.ai.hub.rest.dto.v1_0.TaskDefinition;
+import com.liferay.ai.hub.rest.internal.odata.entity.v1_0.TaskDefinitionEntityModel;
 import com.liferay.ai.hub.rest.resource.v1_0.TaskDefinitionResource;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
@@ -18,12 +19,15 @@ import com.liferay.portal.kernel.search.filter.TermFilter;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinition;
 import com.liferay.portal.workflow.kaleo.model.KaleoDefinitionVersion;
 import com.liferay.portal.workflow.kaleo.service.KaleoDefinitionVersionLocalService;
+
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -37,6 +41,13 @@ import org.osgi.service.component.annotations.ServiceScope;
 	scope = ServiceScope.PROTOTYPE, service = TaskDefinitionResource.class
 )
 public class TaskDefinitionResourceImpl extends BaseTaskDefinitionResourceImpl {
+
+	@Override
+	public EntityModel getEntityModel(MultivaluedMap multivaluedMap)
+		throws Exception {
+
+		return _entityModel;
+	}
 
 	@Override
 	public Page<TaskDefinition> getTaskDefinitionsPage(
@@ -84,12 +95,16 @@ public class TaskDefinitionResourceImpl extends BaseTaskDefinitionResourceImpl {
 
 		return new TaskDefinition() {
 			{
+				setActive(kaleoDefinition::isActive);
 				setDescription(kaleoDefinition::getDescription);
 				setName(kaleoDefinition::getName);
 				setVersion(kaleoDefinition::getVersion);
 			}
 		};
 	}
+
+	private static final EntityModel _entityModel =
+		new TaskDefinitionEntityModel();
 
 	@Reference
 	private KaleoDefinitionVersionLocalService
