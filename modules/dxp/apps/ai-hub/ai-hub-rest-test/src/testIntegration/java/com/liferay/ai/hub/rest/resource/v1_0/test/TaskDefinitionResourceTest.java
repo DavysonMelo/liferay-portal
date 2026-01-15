@@ -78,6 +78,20 @@ public class TaskDefinitionResourceTest
 			TransformUtil.transform(page.getItems(), TaskDefinition::getName));
 	}
 
+	@Test
+	public void testGetTaskDefinitionsPageWithNotPublishedFilter() throws Exception {
+		Page<TaskDefinition> page =
+			taskDefinitionResource.getTaskDefinitionsPage(
+				null,
+				"(active eq 0)",
+				Pagination.of(1, 10),
+				null);
+
+		AssertUtils.assertEquals(
+			List.of(),
+			TransformUtil.transform(page.getItems(), TaskDefinition::getName));
+	}
+
 	@Ignore
 	@Override
 	@Test
