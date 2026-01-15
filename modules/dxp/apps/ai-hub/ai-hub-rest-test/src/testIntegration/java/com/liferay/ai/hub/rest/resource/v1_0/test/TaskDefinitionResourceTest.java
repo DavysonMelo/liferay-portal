@@ -74,6 +74,30 @@ public class TaskDefinitionResourceTest
 
 	@Test
 	public void testGetTaskDefinitionsPage() throws Exception {
+		_testGetTaskDefinitionsPage();
+		_testGetTaskDefinitionsPageWithFilter();
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGetTaskDefinitionsPageWithPagination() {
+	}
+
+	@Ignore
+	@Override
+	@Test
+	public void testGetTaskDefinitionsPageWithSortInteger() throws Exception {
+	}
+
+	@Override
+	protected TaskDefinition testGetTaskDefinitionsPage_addTaskDefinition(
+		TaskDefinition taskDefinition) {
+
+		return taskDefinition;
+	}
+
+	private void _testGetTaskDefinitionsPage() throws Exception {
 		Page<TaskDefinition> page =
 			taskDefinitionResource.getTaskDefinitionsPage(
 				null, null, Pagination.of(1, 10), null);
@@ -89,17 +113,32 @@ public class TaskDefinitionResourceTest
 			TransformUtil.transform(page.getItems(), TaskDefinition::getName));
 	}
 
-	@Ignore
-	@Override
-	@Test
-	public void testGetTaskDefinitionsPageWithPagination() {
-	}
+	private void _testGetTaskDefinitionsPageWithFilter() throws Exception {
 
-	@Override
-	protected TaskDefinition testGetTaskDefinitionsPage_addTaskDefinition(
-		TaskDefinition taskDefinition) {
+		// Active as 0
 
-		return taskDefinition;
+		Page<TaskDefinition> page =
+			taskDefinitionResource.getTaskDefinitionsPage(
+				null, "(active eq 0)", Pagination.of(1, 10), null);
+
+		AssertUtils.assertEquals(
+			List.of(),
+			TransformUtil.transform(page.getItems(), TaskDefinition::getName));
+
+		// Active as 1
+
+		page = taskDefinitionResource.getTaskDefinitionsPage(
+			null, "(active eq 1)", Pagination.of(1, 10), null);
+
+		AssertUtils.assertEquals(
+			List.of(
+				WorkflowDefinitionConstants.NAME_CHANGE_TONE,
+				WorkflowDefinitionConstants.NAME_CHAT_MESSAGE_PIPELINE,
+				WorkflowDefinitionConstants.NAME_FIX_SPELLING_AND_GRAMMAR,
+				WorkflowDefinitionConstants.NAME_IMPROVE_WRITING,
+				WorkflowDefinitionConstants.NAME_MAKE_LONGER,
+				WorkflowDefinitionConstants.NAME_MAKE_SHORTER),
+			TransformUtil.transform(page.getItems(), TaskDefinition::getName));
 	}
 
 	private static String _originalName;
