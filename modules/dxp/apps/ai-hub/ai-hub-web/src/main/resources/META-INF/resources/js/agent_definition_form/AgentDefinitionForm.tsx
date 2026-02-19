@@ -6,7 +6,7 @@
 import ClayForm, {ClayInput, ClayToggle} from '@clayui/form';
 import ClayLayout from '@clayui/layout';
 import ClayPanel from '@clayui/panel';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import './AgentDefinitionForm.scss';
 
@@ -15,6 +15,7 @@ import Icon from '@clayui/icon';
 import Link from '@clayui/link';
 import {Provider} from '@clayui/provider';
 import {openToast} from '@liferay/object-js-components-web';
+import {InputLocalized} from 'frontend-js-components-web';
 
 import Toolbar from './components/ToolBar';
 import {getAgentDefinition, putAgentDefinition} from './services/AgentDefinitionService';
@@ -34,7 +35,7 @@ export default function AgentDefinitionForm({
 	);
 
 	const handleActive = () => {
-		setAgentDefinition((prev) => ({
+		setFormData((prev) => ({
 			...prev,
 			active: !prev.active,
 		}));
@@ -52,26 +53,62 @@ export default function AgentDefinitionForm({
 		}));
 	};
 
-	const handleViewWorkflow = async () => {
+	const handleViewWorkflow = () => {
 		window.location.href = workflowDefinitionURL;
     };
 
 	const handleSubmit = async () => {
-		const response = await putAgentDefinition(agentDefinition);
+		try {
+			const response = await putAgentDefinition(formData);
 
-		if (response.status.label === 'approved') {
+			if (response?.status?.label === 'approved') {
+				openToast({
+					message: Liferay.Language.get('agent-definition-saved-successfully'),
+					type: 'success',
+				});
+				setTimeout(() => {
+					window.location.href = backURL;
+				}, 1000);
+			} else {
+				openToast({
+					message: Liferay.Language.get('failed-to-save-agent-definition'),
+					type: 'danger',
+				});
+			}
+		} catch (error) {
+			console.error('Error in handleSubmit:', error);
 			openToast({
-				message: Liferay.Language.get(
-					'agent-definition-created-successfully'
-				),
-				type: 'success',
+				message: Liferay.Language.get('an-unexpected-error-occurred'),
+				type: 'danger',
 			});
-
-			setTimeout(() => {
-				window.location.href = backURL;
-			}, 1000);
 		}
 	};
+
+	useEffect(() => {
+		async function fetchAgentDefinition() {
+			try {
+				const agentDefinition = await getAgentDefinition(externalReferenceCode);
+				setFormData({ 
+					active: agentDefinition.active,
+					description: agentDefinition.description,
+					externalReferenceCode: agentDefinition.externalReferenceCode,
+					inputVariables: agentDefinition.inputVariables,
+					outputVariables: agentDefinition.outputVariable,
+					title_i18n: agentDefinition.title_i18n,
+				});
+			} catch (error) {
+				setTimeout(() => {
+					window.location.href = backURL;
+				}, 1000);
+				openToast({
+					message: Liferay.Language.get('failed-to-load-agent-definition-data'),
+					type: 'danger',
+				});
+			}
+		}
+
+		fetchAgentDefinition();
+	}, [externalReferenceCode]);
 
 	return (
 		<>
@@ -95,7 +132,7 @@ export default function AgentDefinitionForm({
 				<Toolbar.Item>
 					<Button
 						aria-labelledby="saveButton"
-						data-title="test"
+						data-title="Save Button"
 						data-title-set-as-html
 						onClick={handleSubmit}
 						size="sm"
@@ -143,6 +180,20 @@ export default function AgentDefinitionForm({
 							>
 								<ClayPanel.Body>
 									<h2>{Liferay.Language.get('details')}</h2>
+
+									<ClayForm.Group>
+										<InputLocalized
+											id="title"
+											label={Liferay.Language.get('title')}
+											name="title_i18n"
+											onChange={(value) => setFormData((prev) => ({...prev, title_i18n: value}))}
+											placeholder={Liferay.Language.get(
+												'title'
+											)}
+											required={true}
+											translations={formData.title_i18n as LocalizedValue<string> || {}}
+										/>
+									</ClayForm.Group>
 
 									<ClayForm.Group>
 										<label htmlFor="externalReferenceCode">
