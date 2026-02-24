@@ -25,11 +25,13 @@ import {
 import {AgentDefinition} from './types/AgentDefinition';
 
 export default function AgentDefinitionForm({
+	accountEntryExternalReferenceCode,
 	backURL,
 	externalReferenceCode,
 	readonly,
 	workflowDefinitionURL,
 }: {
+	accountEntryExternalReferenceCode: string;
 	backURL: string;
 	externalReferenceCode: string;
 	readonly: boolean;
@@ -121,7 +123,20 @@ export default function AgentDefinitionForm({
 		if (externalReferenceCode) {
 			fetchAgentDefinition();
 		}
-	}, [externalReferenceCode]);
+		else {
+			setFormData({
+				active: false,
+				description: '',
+				externalReferenceCode: '',
+				inputVariables: '',
+				outputVariable: '',
+				r_accountToAIHubAgentDefinitions_accountEntryERC:
+					accountEntryExternalReferenceCode,
+				title_i18n: {},
+				workflowDefinitionName: '',
+			});
+		}
+	}, [accountEntryExternalReferenceCode, externalReferenceCode]);
 
 	return (
 		<>
@@ -343,31 +358,6 @@ export default function AgentDefinitionForm({
 											type="text"
 											value={
 												formData.workflowDefinitionName
-											}
-										/>
-									</ClayForm.Group>
-
-									<ClayForm.Group>
-										<label htmlFor="accountEntryERC">
-											{Liferay.Language.get('account')}
-
-											<span className="ml-1 reference-mark text-warning">
-												<Icon symbol="asterisk" />
-											</span>
-										</label>
-
-										<ClayInput
-											disabled={readonly}
-											id="account-entry-external-reference-code"
-											name="r_accountToAIHubAgentDefinitions_accountEntryERC"
-											onChange={handleInputChange}
-											placeholder={Liferay.Language.get(
-												'account'
-											)}
-											required={true}
-											type="text"
-											value={
-												formData.r_accountToAIHubAgentDefinitions_accountEntryERC
 											}
 										/>
 									</ClayForm.Group>
