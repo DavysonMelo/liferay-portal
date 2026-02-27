@@ -7,6 +7,17 @@
 
 <%@ include file="/init.jsp" %>
 
-<liferay-portlet:runtime
-	portletName="<%= WorkflowPortletKeys.KALEO_DESIGNER %>"
-/>
+<%
+EditWorkflowDefinitionDisplayContext editWorkflowDefinitionDisplayContext = (EditWorkflowDefinitionDisplayContext)request.getAttribute(EditWorkflowDefinitionDisplayContext.class.getName());
+%>
+
+<div>
+	<react:component
+		module="{Toolbar} from ai-hub-web"
+		props="<%= editWorkflowDefinitionDisplayContext.getReactData() %>"
+	/>
+	
+	<liferay-portlet:runtime
+		portletName="<%= WorkflowPortletKeys.KALEO_DESIGNER %>"
+	/>
+</div>

@@ -4,3 +4,4 @@
  */
 
 export {default as AgentDefinitionForm} from './agent_definition_form/AgentDefinitionForm';
+export {default as Toolbar} from './agent_definition_form/components/ToolBar';

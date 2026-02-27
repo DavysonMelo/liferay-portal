@@ -5,16 +5,21 @@
 
 package com.liferay.ai.hub.web.internal.fragment.renderer;
 
+import com.liferay.ai.hub.web.internal.display.context.EditWorkflowDefinitionDisplayContext;
 import com.liferay.fragment.renderer.FragmentRenderer;
 
+import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.util.Portal;
+import jakarta.servlet.http.HttpServletRequest;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Feliphe Marinho
  */
 @Component(service = FragmentRenderer.class)
 public class EditWorkflowDefinitionFragmentRenderer
-	extends BaseFragmentRenderer<Void> {
+	extends BaseFragmentRenderer<EditWorkflowDefinitionDisplayContext> {
 
 	@Override
 	public String getCollectionKey() {
@@ -22,8 +27,22 @@ public class EditWorkflowDefinitionFragmentRenderer
 	}
 
 	@Override
+	protected EditWorkflowDefinitionDisplayContext getDisplayContext(
+		HttpServletRequest httpServletRequest) {
+
+		return new EditWorkflowDefinitionDisplayContext(
+			_groupLocalService, httpServletRequest, _portal);
+	}
+
+	@Override
 	protected String getJSPPath() {
 		return "/edit_workflow_definition.jsp";
 	}
+
+	@Reference
+	private GroupLocalService _groupLocalService;
+
+	@Reference
+	private Portal _portal;
 
 }
