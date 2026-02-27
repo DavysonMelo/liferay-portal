@@ -8,5 +8,5 @@
 <%@ include file="/init.jsp" %>
 
 <liferay-portlet:runtime
-	portletName="<= WorkflowPortletKeys.KALEO_DESIGNER >"
+	portletName="<%= WorkflowPortletKeys.KALEO_DESIGNER %>"
 />
