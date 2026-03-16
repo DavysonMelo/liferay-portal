@@ -38,6 +38,8 @@ export {default as ContentEditorSidePanel} from './content_editor/components/Con
 // Content Editor
 
 export {default as ContentEditorToolbar} from './content_editor/components/ContentEditorToolbar';
+
+export {default as ContentField} from './content_editor/components/ContentField/ContentField';
 export {default as Spaces} from './content_editor/components/Spaces';
 
 export {default as CommentsPanel} from './content_editor/components/panels/CommentsPanel';
