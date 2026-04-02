@@ -422,6 +422,24 @@ export default function AgentDefinitionForm({
 							</ClayPanel>
 						</ClayLayout.Col>
 					</ClayLayout.Row>
+
+					<ClayLayout.Row>
+						<ClayLayout.Col md={12}>
+							<ClayPanel
+								className="agent-definition-details"
+								collapsable={false}
+								title={Liferay.Language.get('data-sources')}
+							>
+								<ClayPanel.Body>
+									<h2>{Liferay.Language.get('data-sources')}</h2>
+
+									<label htmlFor="assignedSources">{Liferay.Language.get('assigned-sources')}</label>
+
+									<ClayInput disabled={true} name="assignedSources" type="text" />
+								</ClayPanel.Body>
+							</ClayPanel>
+						</ClayLayout.Col>
+					</ClayLayout.Row>
 				</ClayForm>
 			</ClayLayout.ContainerFluid>
 		</>
