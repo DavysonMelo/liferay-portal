@@ -71,7 +71,7 @@ export default function ContentRetrieverForm({
 		},
 		onSubmit: async (values, {setSubmitting}) => {
 			try {
-				await postContentRetriever(values);
+				await postContentRetriever(values, externalReferenceCode);
 
 				openToast({
 					message: Liferay.Language.get(
