@@ -12,17 +12,27 @@ const CONTENT_RETRIEVER_BASE_URI = '/o/ai-hub/v1.0/content-retrievers/';
 const CONTENT_RETRIEVER_BY_EXTERNAL_REFERENCE_CODE_URI =
 	'/o/ai-hub/content-retrievers/by-external-reference-code/';
 
-async function postContentRetriever(contentRetriever: ContentRetriever) {
-	const response = await fetch(`${CONTENT_RETRIEVER_BASE_URI}`, {
-		body: JSON.stringify({
-			...contentRetriever,
-			crawlDate: new Date().toISOString(),
-		}),
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		method: 'POST',
-	});
+async function postContentRetriever(
+	contentRetriever: ContentRetriever,
+	externalReferenceCode: string
+) {
+	const body = !externalReferenceCode
+		? {
+				...contentRetriever,
+				crawlDate: new Date().toISOString(),
+			}
+		: contentRetriever;
+
+	const response = await fetch(
+		`${CONTENT_RETRIEVER_BASE_URI}${externalReferenceCode}`,
+		{
+			body: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			method: 'PUT',
+		}
+	);
 
 	if (!response.ok) {
 		const error = await response
