@@ -75,7 +75,7 @@ export default function ContentRetrieverForm({
 
 				openToast({
 					message: Liferay.Language.get(
-						'content-retriever-saved-successfully'
+						'content-retriever-was-saved-successfully'
 					),
 					type: 'success',
 				});
