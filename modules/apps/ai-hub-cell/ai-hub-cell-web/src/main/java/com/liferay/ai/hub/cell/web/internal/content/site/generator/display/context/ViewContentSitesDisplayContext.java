@@ -67,6 +67,14 @@ public class ViewContentSitesDisplayContext {
 		).build();
 	}
 
+	public String getReviewStepURL() {
+		return PortletURLBuilder.createRenderURL(
+			_liferayPortletResponse
+		).setMVCPath(
+			"/view_review_step.jsp"
+		).buildString();
+	}
+
 	public List<FDSActionDropdownItem> getFDSActionDropdownItems()
 		throws Exception {
 

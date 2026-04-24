@@ -13,7 +13,8 @@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %><%@
 taglib uri="http://liferay.com/tld/util" prefix="liferay-util" %>
 
 <%@ page import="com.liferay.ai.hub.cell.web.internal.constants.AIHubCellFDSNames" %><%@
-page import="com.liferay.ai.hub.cell.web.internal.content.site.generator.display.context.ViewContentSitesDisplayContext" %>
+page import="com.liferay.ai.hub.cell.web.internal.content.site.generator.display.context.ViewContentSitesDisplayContext" %><%@
+page import="com.liferay.portal.kernel.util.HashMapBuilder" %>
 
 <liferay-frontend:defineObjects />
 
