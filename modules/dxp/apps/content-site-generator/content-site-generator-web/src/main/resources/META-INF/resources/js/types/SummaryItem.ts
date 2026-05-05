@@ -3,5 +3,8 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-export {default as ContentSiteGenerator} from './ContentSiteGenerator';
-export {default as RefineStep} from './RefineStep';
+export type SummaryItem = {
+	icon: string;
+	title: string;
+	value: number | string;
+};

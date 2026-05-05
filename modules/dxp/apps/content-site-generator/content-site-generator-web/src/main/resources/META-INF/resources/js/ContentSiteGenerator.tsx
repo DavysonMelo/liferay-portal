@@ -8,14 +8,10 @@ import ClayIcon from '@clayui/icon';
 import ClayLayout from '@clayui/layout';
 import React, {useRef, useState} from 'react';
 
-import MultiStepProgress from './MultiStepProgress';
+import MultiStepProgress from './components/MultiStepProgress';
+import {Example} from './types/Example';
 
 const SPRITEMAP = `${Liferay.ThemeDisplay.getPathThemeImages()}/lexicon/icons.svg`;
-
-interface Example {
-	icon: string;
-	label: string;
-}
 
 const EXAMPLES: Example[] = [
 	{
@@ -44,12 +40,22 @@ const EXAMPLES: Example[] = [
 	},
 ];
 
-export default function ContentSiteGenerator() {
+interface IProps {
+	refineStepURL?: string;
+}
+
+export default function ContentSiteGenerator({refineStepURL}: IProps) {
 	const [prompt, setPrompt] = useState('');
 	const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const hasText = !!prompt.trim().length;
+
+	const handleAnalyze = () => {
+		if (refineStepURL) {
+			Liferay.Util.navigate(refineStepURL);
+		}
+	};
 
 	const handleAttachFiles = () => {
 		fileInputRef.current?.click();
@@ -139,6 +145,7 @@ export default function ContentSiteGenerator() {
 							<ClayButton
 								disabled={!hasText}
 								displayType={hasText ? 'primary' : 'secondary'}
+								onClick={handleAnalyze}
 							>
 								{Liferay.Language.get('analyze-and-configure')}
 
