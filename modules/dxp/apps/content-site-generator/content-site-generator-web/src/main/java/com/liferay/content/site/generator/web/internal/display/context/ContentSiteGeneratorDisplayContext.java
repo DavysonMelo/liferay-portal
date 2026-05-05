@@ -39,6 +39,14 @@ public class ContentSiteGeneratorDisplayContext {
 		).buildString();
 	}
 
+	public String getReviewStepURL() {
+		return PortletURLBuilder.createRenderURL(
+			_liferayPortletResponse
+		).setMVCPath(
+			"/view_review_step.jsp"
+		).buildString();
+	}
+
 	private final LiferayPortletResponse _liferayPortletResponse;
 
 }
