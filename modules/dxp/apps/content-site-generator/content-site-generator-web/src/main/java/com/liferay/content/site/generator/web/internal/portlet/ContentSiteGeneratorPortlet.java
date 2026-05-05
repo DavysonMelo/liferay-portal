@@ -6,11 +6,20 @@
 package com.liferay.content.site.generator.web.internal.portlet;
 
 import com.liferay.content.site.generator.web.internal.constants.ContentSiteGeneratorPortletKeys;
+import com.liferay.content.site.generator.web.internal.display.context.ContentSiteGeneratorDisplayContext;
+import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.kernel.util.Portal;
 
 import jakarta.portlet.Portlet;
+import jakarta.portlet.PortletException;
+import jakarta.portlet.RenderRequest;
+import jakarta.portlet.RenderResponse;
+
+import java.io.IOException;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Mylena Monte
@@ -31,4 +40,26 @@ import org.osgi.service.component.annotations.Component;
 	service = Portlet.class
 )
 public class ContentSiteGeneratorPortlet extends MVCPortlet {
+
+	@Override
+	public void render(
+			RenderRequest renderRequest, RenderResponse renderResponse)
+		throws IOException, PortletException {
+
+		LiferayPortletResponse liferayPortletResponse =
+			_portal.getLiferayPortletResponse(renderResponse);
+
+		ContentSiteGeneratorDisplayContext contentSiteGeneratorDisplayContext =
+			new ContentSiteGeneratorDisplayContext(liferayPortletResponse);
+
+		renderRequest.setAttribute(
+			ContentSiteGeneratorDisplayContext.class.getName(),
+			contentSiteGeneratorDisplayContext);
+
+		super.render(renderRequest, renderResponse);
+	}
+
+	@Reference
+	private Portal _portal;
+
 }

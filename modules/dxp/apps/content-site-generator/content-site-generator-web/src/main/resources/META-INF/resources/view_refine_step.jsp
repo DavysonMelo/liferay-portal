@@ -12,10 +12,12 @@ ContentSiteGeneratorDisplayContext contentSiteGeneratorDisplayContext = (Content
 %>
 
 <react:component
-	module="{ContentSiteGenerator} from content-site-generator-web"
+	module="{RefineStep} from content-site-generator-web"
 	props='<%=
 		HashMapBuilder.<String, Object>put(
-			"refineStepURL", contentSiteGeneratorDisplayContext.getRefineStepURL()
+			"backURL", contentSiteGeneratorDisplayContext.getContentSiteGeneratorURL()
+		).put(
+			"cancelURL", contentSiteGeneratorDisplayContext.getBackURL()
 		).build()
 	%>'
 />
