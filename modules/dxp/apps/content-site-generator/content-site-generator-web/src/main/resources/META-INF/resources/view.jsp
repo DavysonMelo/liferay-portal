@@ -7,6 +7,4 @@
 
 <%@ include file="/init.jsp" %>
 
-<react:component
-	module="{ContentSiteGenerator} from content-site-generator-web"
-/>
+<react:component module="{ContentSiteGenerator} from content-site-generator-web" />
