@@ -62,6 +62,7 @@ module.exports = {
 		'@liferay/configuration-admin-web': [],
 		'@liferay/content-dashboard-document-library-impl': [],
 		'@liferay/content-dashboard-web': [],
+		'@liferay/content-site-generator-web': [],
 		'@liferay/cookies-banner-web': [],
 		'@liferay/cookies-sample-web': [],
 		'@liferay/design-library-web': [],
