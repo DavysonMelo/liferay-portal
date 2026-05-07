@@ -20,30 +20,32 @@ public class ContentSiteGeneratorDisplayContext {
 	}
 
 	public String getBackURL() {
-		return PortletURLBuilder.createRenderURL(
-			_liferayPortletResponse
-		).buildString();
+		return _buildURL(null);
 	}
 
 	public String getContentSiteGeneratorURL() {
-		return PortletURLBuilder.createRenderURL(
-			_liferayPortletResponse
-		).buildString();
+		return _buildURL("/view_content_site_generator.jsp");
 	}
 
 	public String getRefineStepURL() {
-		return PortletURLBuilder.createRenderURL(
-			_liferayPortletResponse
-		).setMVCPath(
-			"/view_refine_step.jsp"
-		).buildString();
+		return _buildURL("/view_refine_step.jsp");
 	}
 
 	public String getReviewStepURL() {
+		return _buildURL("/view_review_step.jsp");
+	}
+
+	private String _buildURL(String mvcPath) {
+		if (mvcPath == null) {
+			return PortletURLBuilder.createRenderURL(
+				_liferayPortletResponse
+			).buildString();
+		}
+
 		return PortletURLBuilder.createRenderURL(
 			_liferayPortletResponse
 		).setMVCPath(
-			"/view_review_step.jsp"
+			mvcPath
 		).buildString();
 	}
 

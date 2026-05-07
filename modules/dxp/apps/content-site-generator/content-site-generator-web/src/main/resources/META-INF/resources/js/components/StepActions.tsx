@@ -7,6 +7,8 @@ import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
 import React from 'react';
 
+import {SPRITEMAP} from '../constants/spritemap';
+
 interface IProps {
 	backDisabled?: boolean;
 	backLabel: string;
@@ -39,7 +41,11 @@ export default function StepActions({
 				displayType="link"
 				onClick={onBack}
 			>
-				<ClayIcon className="mr-1" symbol="angle-left" />
+				<ClayIcon
+					className="mr-1"
+					spritemap={SPRITEMAP}
+					symbol="angle-left"
+				/>
 
 				{backLabel}
 			</ClayButton>

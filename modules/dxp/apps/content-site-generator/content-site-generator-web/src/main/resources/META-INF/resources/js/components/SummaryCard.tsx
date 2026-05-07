@@ -7,7 +7,7 @@ import ClayIcon from '@clayui/icon';
 import ClayPanel from '@clayui/panel';
 import React from 'react';
 
-import {SummaryItem} from '../types/SummaryItem';
+import type {SummaryItem} from '../types/SummaryItem';
 
 export default function SummaryCard({icon, title, value}: SummaryItem) {
 	return (

@@ -6,7 +6,9 @@
 import {ClayMultiStepNavWithBasicItems} from '@clayui/multi-step-nav';
 import React from 'react';
 
-import {MultiStepProgressStep} from '../types/MultiStepProgressStep';
+import {SPRITEMAP} from '../constants/spritemap';
+
+import type {MultiStepProgressStep} from '../types/MultiStepProgressStep';
 
 interface IProps {
 	activeStep: number;
@@ -18,7 +20,7 @@ export default function MultiStepProgress({activeStep, steps}: IProps) {
 		<ClayMultiStepNavWithBasicItems
 			active={activeStep}
 			className="multi-step-title-center"
-			spritemap={`${Liferay.ThemeDisplay.getPathThemeImages()}/lexicon/icons.svg`}
+			spritemap={SPRITEMAP}
 			steps={steps}
 		/>
 	);

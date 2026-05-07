@@ -7,10 +7,6 @@
 
 <%@ include file="/init.jsp" %>
 
-<%
-ContentSiteGeneratorDisplayContext contentSiteGeneratorDisplayContext = (ContentSiteGeneratorDisplayContext)request.getAttribute(ContentSiteGeneratorDisplayContext.class.getName());
-%>
-
 <react:component
 	module="{RefineStep} from content-site-generator-web"
 	props='<%=

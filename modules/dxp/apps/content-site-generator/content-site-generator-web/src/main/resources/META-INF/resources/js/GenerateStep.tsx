@@ -8,75 +8,36 @@ import ClayLabel from '@clayui/label';
 import React from 'react';
 
 import StepActions from './components/StepActions';
-import {Task} from './types/Task';
-
-const SPRITEMAP = `${Liferay.ThemeDisplay.getPathThemeImages()}/lexicon/icons.svg`;
-
-interface Stat {
-	icon: string;
-	label: string;
-	value: string;
-}
-
-const STATS: Stat[] = [
-	{
-		icon: 'document',
-		label: Liferay.Language.get('content-entries'),
-		value: '4 / 150',
-	},
-	{
-		icon: 'magic',
-		label: Liferay.Language.get('content-pages'),
-		value: '5',
-	},
-	{
-		icon: 'globe',
-		label: Liferay.Language.get('languages'),
-		value: '3',
-	},
-];
-
-const TASKS: Task[] = [
-	{
-		label: Liferay.Language.get('analyzing-reference-documents'),
-		progress: 100,
-		status: 'completed',
-	},
-	{
-		label: Liferay.Language.get('extracting-key-topics-and-features'),
-		progress: 100,
-		status: 'completed',
-	},
-	{
-		label: Liferay.Language.get('generating-contents'),
-		progress: 10,
-		status: 'in-progress',
-	},
-	{
-		label: Liferay.Language.get('generating-content-pages'),
-		progress: 0,
-		status: 'pending',
-	},
-	{
-		label: Liferay.Language.get('localizing-to-target-languages'),
-		progress: 0,
-		status: 'pending',
-	},
-	{label: Liferay.Language.get('tbd'), progress: 0, status: 'pending'},
-	{
-		label: Liferay.Language.get('seo-optimization'),
-		progress: 0,
-		status: 'pending',
-	},
-];
+import {SPRITEMAP} from './constants/spritemap';
+import useStepNavigation from './hooks/useStepNavigation';
+import {MOCK_STATS, MOCK_TASKS} from './mocks/generateStep';
 
 interface IProps {
-	onBack: () => void;
-	onCancel: () => void;
-	onContinue: () => void;
+	backURL?: string;
+	cancelURL?: string;
+	continueURL?: string;
+	onBack?: () => void;
+	onCancel?: () => void;
+	onContinue?: () => void;
 }
 
-export default function GenerateStep({onBack, onCancel, onContinue}: IProps) {
+export default function GenerateStep({
+	backURL,
+	cancelURL,
+	continueURL,
+	onBack,
+	onCancel,
+	onContinue,
+}: IProps) {
+	const {handleBack, handleCancel, handleContinue} = useStepNavigation({
+		backURL,
+		cancelURL,
+		continueURL,
+		onBack,
+		onCancel,
+		onContinue,
+	});
+
 	return (
 		<div className="content-site-generator__generate">
 			<h3 className="content-site-generator__section-title">
@@ -84,7 +45,7 @@ export default function GenerateStep({onBack, onCancel, onContinue}: IProps) {
 			</h3>
 
 			<div className="content-site-generator__stats">
-				{STATS.map((stat, index) => (
+				{MOCK_STATS.map((stat, index) => (
 					<div className="content-site-generator__stat" key={index}>
 						<div className="content-site-generator__stat-label">
 							<ClayIcon
@@ -104,7 +65,7 @@ export default function GenerateStep({onBack, onCancel, onContinue}: IProps) {
 			</div>
 
 			<ul className="content-site-generator__tasks list-unstyled">
-				{TASKS.map((task, index) => (
+				{MOCK_TASKS.map((task, index) => (
 					<li
 						className={`content-site-generator__task content-site-generator__task--${task.status}`}
 						key={index}
@@ -179,9 +140,9 @@ export default function GenerateStep({onBack, onCancel, onContinue}: IProps) {
 					Liferay.Language.get('back-to-x'),
 					Liferay.Language.get('refine')
 				)}
-				onBack={onBack}
-				onCancel={onCancel}
-				onContinue={onContinue}
+				onBack={handleBack}
+				onCancel={handleCancel}
+				onContinue={handleContinue}
 			/>
 		</div>
 	);
