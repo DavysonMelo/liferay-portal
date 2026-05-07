@@ -5,13 +5,19 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayLabel from '@clayui/label';
+import ClayLayout from '@clayui/layout';
 import ClayPanel from '@clayui/panel';
+import {
+	AIAssistantChat,
+	ChatContext,
+} from '@liferay/ai-hub-cell-js-components-web';
 import {sub} from 'frontend-js-web';
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 
 import ContentPreviewForm from './components/ContentPreviewForm';
+import MultiStepProgress from './components/MultiStepProgress';
 import StepActions from './components/StepActions';
-import StepLayout from './components/StepLayout';
+import {WIZARD_STEPS} from './constants/wizardSteps';
 import useStepNavigation from './hooks/useStepNavigation';
 import {
 	MOCK_ATTACHMENTS,
@@ -73,106 +79,151 @@ export default function RefineStep({
 		onContinue,
 	});
 
+	const getChatContext = useCallback(
+		(): ChatContext => ({
+			context: {},
+			instructionDefinitionScope: '',
+		}),
+		[]
+	);
+
 	return (
-		<StepLayout activeStep={1}>
-			<div className="content-site-generator-refine">
-				<div className="content-site-generator-refine__header">
-					<h3>
-						{Liferay.Language.get(
-							'preview-content-to-be-generated'
-						)}
-					</h3>
-
-					<p className="text-secondary">
-						{Liferay.Language.get(
-							'review-the-configuration-and-content-samples-before-generating'
-						)}
-					</p>
-				</div>
-
-				<ClayPanel
-					className="content-site-generator-refine__section"
-					displayType="secondary"
-				>
-					<ClayPanel.Body>
-						<h4 className="content-site-generator-refine__section-title">
-							{Liferay.Language.get('your-prompt')}
-						</h4>
-
-						{prompt && (
-							<>
-								<p className="content-site-generator-refine__prompt">
-									{`"${prompt}"`}
-								</p>
-
-								<div className="dropdown-divider" />
-
-								<p className="content-site-generator-refine__attachments-label text-secondary">
-									{attachments.length
-										? sub(
-												Liferay.Language.get(
-													'attached-files-x'
-												),
-												attachments.length
-											)
-										: Liferay.Language.get(
-												'attached-files'
-											)}
-								</p>
-
-								{attachments.length ? (
-									<div className="content-site-generator-refine__attachments">
-										{attachments.map(
-											(file: string, index: number) => (
-												<ClayLabel
-													displayType="secondary"
-													key={index}
-												>
-													{file}
-												</ClayLabel>
-											)
-										)}
-									</div>
-								) : (
-									<p className="font-italic text-secondary">
-										{Liferay.Language.get(
-											'no-files-attached'
-										)}
-									</p>
-								)}
-							</>
-						)}
-					</ClayPanel.Body>
-				</ClayPanel>
-
-				<ContentPreviewForm
-					contentSamples={contentSamples}
-					detectedConfig={detectedConfig}
-					generatedItems={generatedItems}
-					summary={summary}
-					templates={templates}
-				/>
-
-				{showTip && (
-					<ClayAlert
-						className="content-site-generator-refine__tip"
-						displayType="info"
-						onClose={() => setShowTip(false)}
-						title={Liferay.Language.get('tip')}
+		<div className="content-site-generator">
+			<ClayLayout.ContainerFluid view>
+				<ClayLayout.Row>
+					<ClayLayout.Col
+						className="content-site-generator-refine__sidebar"
+						md={3}
 					>
-						{Liferay.Language.get(
-							'use-the-chat-on-the-left-to-refine-your-requirements-before-generating-you-can-ask-to-add-more-pages-change-layouts-or-adjust-any-configuration'
-						)}
-					</ClayAlert>
-				)}
+						<AIAssistantChat
+							embedded
+							getContext={getChatContext}
+							initialMessage={prompt}
+						/>
+					</ClayLayout.Col>
 
-				<StepActions
-					backLabel={Liferay.Language.get('back-to-prompt')}
-					onBack={handleBack}
-					onCancel={handleCancel}
-					onContinue={handleContinue}
-				/>
-			</div>
-		</StepLayout>
+					<ClayLayout.Col md={9}>
+						<ClayLayout.Row justify="center">
+							<ClayLayout.Col md={12} xl={10}>
+								<div className="content-site-generator__progress">
+									<MultiStepProgress
+										activeStep={1}
+										steps={WIZARD_STEPS}
+									/>
+								</div>
+
+								<div className="content-site-generator-refine">
+									<div className="content-site-generator-refine__header">
+										<h3>
+											{Liferay.Language.get(
+												'preview-content-to-be-generated'
+											)}
+										</h3>
+
+										<p className="text-secondary">
+											{Liferay.Language.get(
+												'review-the-configuration-and-content-samples-before-generating'
+											)}
+										</p>
+									</div>
+
+									<ClayPanel
+										className="content-site-generator-refine__section"
+										displayType="secondary"
+									>
+										<ClayPanel.Body>
+											<h4 className="content-site-generator-refine__section-title">
+												{Liferay.Language.get(
+													'your-prompt'
+												)}
+											</h4>
+
+											{prompt && (
+												<>
+													<p className="content-site-generator-refine__prompt">
+														{`"${prompt}"`}
+													</p>
+
+													<div className="dropdown-divider" />
+
+													<p className="content-site-generator-refine__attachments-label text-secondary">
+														{attachments.length
+															? sub(
+																	Liferay.Language.get(
+																		'attached-files-x'
+																	),
+																	attachments.length
+																)
+															: Liferay.Language.get(
+																	'attached-files'
+																)}
+													</p>
+
+													{attachments.length ? (
+														<div className="content-site-generator-refine__attachments">
+															{attachments.map(
+																(
+																	file: string,
+																	index: number
+																) => (
+																	<ClayLabel
+																		displayType="secondary"
+																		key={
+																			index
+																		}
+																	>
+																		{file}
+																	</ClayLabel>
+																)
+															)}
+														</div>
+													) : (
+														<p className="font-italic text-secondary">
+															{Liferay.Language.get(
+																'no-files-attached'
+															)}
+														</p>
+													)}
+												</>
+											)}
+										</ClayPanel.Body>
+									</ClayPanel>
+
+									<ContentPreviewForm
+										contentSamples={contentSamples}
+										detectedConfig={detectedConfig}
+										generatedItems={generatedItems}
+										summary={summary}
+										templates={templates}
+									/>
+
+									{showTip && (
+										<ClayAlert
+											className="content-site-generator-refine__tip"
+											displayType="info"
+											onClose={() => setShowTip(false)}
+											title={Liferay.Language.get('tip')}
+										>
+											{Liferay.Language.get(
+												'use-the-chat-on-the-left-to-refine-your-requirements-before-generating-you-can-ask-to-add-more-pages-change-layouts-or-adjust-any-configuration'
+											)}
+										</ClayAlert>
+									)}
+
+									<StepActions
+										backLabel={Liferay.Language.get(
+											'back-to-prompt'
+										)}
+										onBack={handleBack}
+										onCancel={handleCancel}
+										onContinue={handleContinue}
+									/>
+								</div>
+							</ClayLayout.Col>
+						</ClayLayout.Row>
+					</ClayLayout.Col>
+				</ClayLayout.Row>
+			</ClayLayout.ContainerFluid>
+		</div>
 	);
 }
