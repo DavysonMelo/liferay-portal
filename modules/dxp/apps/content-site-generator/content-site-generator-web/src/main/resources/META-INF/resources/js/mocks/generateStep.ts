@@ -50,10 +50,4 @@ export const MOCK_TASKS: Task[] = [
 		progress: 0,
 		status: 'pending',
 	},
-	{label: Liferay.Language.get('tbd'), progress: 0, status: 'pending'},
-	{
-		label: Liferay.Language.get('seo-optimization'),
-		progress: 0,
-		status: 'pending',
-	},
 ];

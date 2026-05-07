@@ -10,7 +10,7 @@
 		text-align: center;
 
 		h2 {
-			font-weight: 600;
+			font-weight: $font-weight-semi-bold;
 			margin-bottom: 0.5rem;
 		}
 	}
@@ -24,7 +24,7 @@
 	&__actions {
 		align-items: center;
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-end;
 		margin-top: 1rem;
 	}
 
@@ -53,7 +53,7 @@
 	}
 
 	&__section-title {
-		font-weight: 600;
+		font-weight: $font-weight-semi-bold;
 		margin-bottom: 1rem;
 	}
 
@@ -68,7 +68,7 @@
 	&__stats {
 		display: grid;
 		gap: 1rem;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 		margin-bottom: 2rem;
 	}
 
@@ -82,13 +82,13 @@
 		align-items: center;
 		color: $secondary;
 		display: flex;
-		font-size: 0.875rem;
+		font-size: $font-size-sm;
 		margin-bottom: 0.5rem;
 	}
 
 	&__stat-value {
 		font-size: 1.5rem;
-		font-weight: 600;
+		font-weight: $font-weight-semi-bold;
 	}
 
 	&__tasks {
@@ -148,7 +148,7 @@
 
 	&__task-label {
 		flex: 1;
-		font-weight: 600;
+		font-weight: $font-weight-semi-bold;
 	}
 
 	&__task-progress {
@@ -226,7 +226,7 @@
 		margin-bottom: 1.5rem;
 
 		h3 {
-			font-weight: 600;
+			font-weight: $font-weight-semi-bold;
 			margin-bottom: 0.25rem;
 		}
 
@@ -237,13 +237,13 @@
 
 	&__section-heading {
 		font-size: 1.125rem;
-		font-weight: 600;
+		font-weight: $font-weight-semi-bold;
 		margin-bottom: 0.5rem;
 	}
 
 	&__section-title {
 		font-size: 1rem;
-		font-weight: 600;
+		font-weight: $font-weight-semi-bold;
 		margin-bottom: 1rem;
 	}
 
@@ -253,7 +253,7 @@
 	}
 
 	&__attachments-label {
-		font-size: 0.875rem;
+		font-size: $font-size-sm;
 		margin: 0.75rem 0 0.5rem;
 	}
 
@@ -286,13 +286,13 @@
 
 	&__template-name {
 		font-size: 1rem;
-		font-weight: 600;
+		font-weight: $font-weight-semi-bold;
 		margin-bottom: 0;
 	}
 
 	&__template-entries {
 		display: block;
-		font-size: 0.875rem;
+		font-size: $font-size-sm;
 		margin-bottom: 0.5rem;
 	}
 
@@ -325,13 +325,13 @@
 	&__summary-card-header {
 		align-items: center;
 		display: flex;
-		font-size: 0.875rem;
+		font-size: $font-size-sm;
 		gap: 0.5rem;
 		margin-bottom: 0.5rem;
 	}
 
 	&__summary-card-value {
-		font-weight: 700;
+		font-weight: $font-weight-bold;
 		margin: 0;
 	}
 
@@ -346,8 +346,8 @@
 
 		.panel-title,
 		.panel-header-link {
-			font-size: 0.875rem;
-			font-weight: 600;
+			font-size: $font-size-sm;
+			font-weight: $font-weight-semi-bold;
 			letter-spacing: 0;
 			text-transform: none;
 		}
@@ -367,7 +367,7 @@
 
 		.control-label {
 			font-size: 0.75rem;
-			font-weight: 600;
+			font-weight: $font-weight-semi-bold;
 			margin-bottom: 0.25rem;
 		}
 

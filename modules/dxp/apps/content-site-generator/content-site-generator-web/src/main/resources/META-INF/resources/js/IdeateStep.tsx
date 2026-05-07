@@ -5,7 +5,7 @@
 
 import ClayButton from '@clayui/button';
 import ClayIcon from '@clayui/icon';
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 
 import StepLayout from './components/StepLayout';
 import {EXAMPLES} from './constants/examples';
@@ -17,8 +17,6 @@ interface IProps {
 
 export default function IdeateStep({refineStepURL}: IProps) {
 	const [prompt, setPrompt] = useState('');
-	const [attachedFiles, setAttachedFiles] = useState<File[]>([]);
-	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const hasText = !!prompt.trim().length;
 
@@ -32,20 +30,6 @@ export default function IdeateStep({refineStepURL}: IProps) {
 		url.searchParams.set('prompt', prompt);
 
 		Liferay.Util.navigate(url.toString());
-	};
-
-	const handleAttachFiles = () => {
-		fileInputRef.current?.click();
-	};
-
-	const handleFilesSelected = (
-		event: React.ChangeEvent<HTMLInputElement>
-	) => {
-		const files = event.target.files;
-
-		if (files) {
-			setAttachedFiles(Array.from(files));
-		}
 	};
 
 	return (
@@ -70,30 +54,6 @@ export default function IdeateStep({refineStepURL}: IProps) {
 			/>
 
 			<div className="content-site-generator__actions">
-				<ClayButton displayType="secondary" onClick={handleAttachFiles}>
-					{Liferay.Language.get('attach-files')}
-
-					<ClayIcon
-						className="ml-2"
-						spritemap={SPRITEMAP}
-						symbol="paperclip"
-					/>
-
-					{!!attachedFiles.length && (
-						<span className="ml-2 text-secondary">
-							{`(${attachedFiles.length})`}
-						</span>
-					)}
-				</ClayButton>
-
-				<input
-					className="d-none"
-					multiple
-					onChange={handleFilesSelected}
-					ref={fileInputRef}
-					type="file"
-				/>
-
 				<ClayButton
 					disabled={!hasText}
 					displayType={hasText ? 'primary' : 'secondary'}
@@ -114,23 +74,13 @@ export default function IdeateStep({refineStepURL}: IProps) {
 					{Liferay.Language.get('try-an-example')}
 				</p>
 
-				<ul className="list-group">
+				<div className="list-group">
 					{EXAMPLES.map((example, index) => (
-						<li
-							className="content-site-generator__example list-group-item"
+						<button
+							className="content-site-generator__example list-group-item list-group-item-action"
 							key={index}
 							onClick={() => setPrompt(example.label)}
-							onKeyDown={(event) => {
-								if (
-									event.key === 'Enter' ||
-									event.key === ' '
-								) {
-									event.preventDefault();
-									setPrompt(example.label);
-								}
-							}}
-							role="button"
-							tabIndex={0}
+							type="button"
 						>
 							<ClayIcon
 								className="mr-2 text-secondary"
@@ -139,9 +89,9 @@ export default function IdeateStep({refineStepURL}: IProps) {
 							/>
 
 							{example.label}
-						</li>
+						</button>
 					))}
-				</ul>
+				</div>
 			</div>
 		</StepLayout>
 	);
