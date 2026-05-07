@@ -8,10 +8,10 @@
 <%@ include file="/init.jsp" %>
 
 <react:component
-	module="{ReviewStep} from content-site-generator-web"
+	module="{IdeateStep} from content-site-generator-web"
 	props='<%=
 		HashMapBuilder.<String, Object>put(
-			"backURL", contentSiteGeneratorDisplayContext.getRefineStepURL()
+			"refineStepURL", contentSiteGeneratorDisplayContext.getRefineStepURL()
 		).build()
 	%>'
 />

@@ -6,126 +6,56 @@
 import ClayButton from '@clayui/button';
 import {ClayCheckbox, ClayInput} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
-import ClayLabel from '@clayui/label';
 import {ClayPaginationWithBasicItems} from '@clayui/pagination';
 import ClayPaginationBar from '@clayui/pagination-bar';
 import ClayTable from '@clayui/table';
 import React, {useState} from 'react';
 
-import {Entry} from './types/Entry';
-
-const SPRITEMAP = `${Liferay.ThemeDisplay.getPathThemeImages()}/lexicon/icons.svg`;
-
-interface Stat {
-	icon: string;
-	label: string;
-	value: React.ReactNode;
-}
-
-const STATS: Stat[] = [
-	{
-		icon: 'document',
-		label: Liferay.Language.get('total-items'),
-		value: '155',
-	},
-	{
-		icon: 'globe',
-		label: Liferay.Language.get('languages'),
-		value: '2',
-	},
-	{
-		icon: 'document',
-		label: Liferay.Language.get('status'),
-		value: (
-			<ClayLabel displayType="secondary">
-				{Liferay.Language.get('draft').toUpperCase()}
-			</ClayLabel>
-		),
-	},
-];
-
-const LANGUAGES = 'Spanish, Italian, French';
-
-const ENTRIES: Entry[] = [
-	{
-		icon: 'folder',
-		items: 60,
-		language: LANGUAGES,
-		title: 'Products',
-		url: '/products/blog-article-1----spanish',
-	},
-	{
-		icon: 'document',
-		items: 1,
-		language: LANGUAGES,
-		title: 'Product',
-		url: '/products/blog-article-1----german',
-	},
-	{
-		icon: 'document',
-		items: 1,
-		language: LANGUAGES,
-		title: 'Blogs',
-		url: '/products/blog-article-1----english-(us)',
-	},
-	{
-		icon: 'folder',
-		items: 20,
-		language: LANGUAGES,
-		title: 'Blog Articles',
-		url: '/products/blog-article-1----spanish',
-	},
-	{
-		icon: 'document',
-		items: 1,
-		language: LANGUAGES,
-		title: 'Blog Article',
-		url: '/products/blog-article-1----german',
-	},
-	{
-		icon: 'document',
-		items: 1,
-		language: LANGUAGES,
-		title: 'Contact',
-		url: '/products/blog-article-1----english-(us)',
-	},
-	{
-		icon: 'folder',
-		items: 30,
-		language: LANGUAGES,
-		title: 'Contact form',
-		url: '/products/blog-article-1----german',
-	},
-];
-
-const TOTAL_ENTRIES = 400;
+import {SPRITEMAP} from './constants/spritemap';
+import {MOCK_ENTRIES, MOCK_STATS} from './mocks/reviewAndPublishStep';
 
 export default function ReviewAndPublishStep() {
-	const [page, setPage] = useState(2);
+	const [page, setPage] = useState(1);
 	const [pageSize, setPageSize] = useState(10);
 	const [search, setSearch] = useState('');
-	const [selected, setSelected] = useState<Set<number>>(new Set());
+	const [selected, setSelected] = useState<Set<string>>(new Set());
+
+	const filteredEntries = search
+		? MOCK_ENTRIES.filter((entry) =>
+				entry.title.toLowerCase().includes(search.toLowerCase())
+			)
+		: MOCK_ENTRIES;
+
+	const pagedEntries = filteredEntries.slice(
+		(page - 1) * pageSize,
+		page * pageSize
+	);
 
 	const allSelected =
-		!!ENTRIES.length && selected.size === ENTRIES.length;
+		!!filteredEntries.length && selected.size === filteredEntries.length;
+
+	const handleSearch = (value: string) => {
+		setSearch(value);
+		setPage(1);
+	};
 
 	const toggleSelectAll = () => {
 		if (allSelected) {
 			setSelected(new Set());
 		}
 		else {
-			setSelected(new Set(ENTRIES.map((_, index) => index)));
+			setSelected(new Set(filteredEntries.map((entry) => entry.title)));
 		}
 	};
 
-	const toggleSelected = (index: number) => {
+	const toggleSelected = (title: string) => {
 		const next = new Set(selected);
 
-		if (next.has(index)) {
-			next.delete(index);
+		if (next.has(title)) {
+			next.delete(title);
 		}
 		else {
-			next.add(index);
+			next.add(title);
 		}
 
 		setSelected(next);
@@ -146,7 +76,7 @@ export default function ReviewAndPublishStep() {
 			</div>
 
 			<div className="content-site-generator__stats">
-				{STATS.map((stat, index) => (
+				{MOCK_STATS.map((stat, index) => (
 					<div className="content-site-generator__stat" key={index}>
 						<div className="content-site-generator__stat-label">
 							<ClayIcon
@@ -208,7 +138,9 @@ export default function ReviewAndPublishStep() {
 					<ClayInput.GroupItem>
 						<ClayInput
 							aria-label={Liferay.Language.get('search')}
-							onChange={(event) => setSearch(event.target.value)}
+							onChange={(event) =>
+								handleSearch(event.target.value)
+							}
 							placeholder={Liferay.Language.get('search')}
 							type="text"
 							value={search}
@@ -274,13 +206,13 @@ export default function ReviewAndPublishStep() {
 				</ClayTable.Head>
 
 				<ClayTable.Body>
-					{ENTRIES.map((entry, index) => (
-						<ClayTable.Row key={index}>
+					{pagedEntries.map((entry) => (
+						<ClayTable.Row key={entry.title}>
 							<ClayTable.Cell>
 								<ClayCheckbox
-									aria-label={Liferay.Language.get('select')}
-									checked={selected.has(index)}
-									onChange={() => toggleSelected(index)}
+									aria-label={entry.title}
+									checked={selected.has(entry.title)}
+									onChange={() => toggleSelected(entry.title)}
 								/>
 							</ClayTable.Cell>
 
@@ -291,7 +223,7 @@ export default function ReviewAndPublishStep() {
 									symbol={entry.icon}
 								/>
 
-								<a href="#">{entry.title}</a>
+								<a href={entry.url}>{entry.title}</a>
 							</ClayTable.Cell>
 
 							<ClayTable.Cell>{entry.language}</ClayTable.Cell>
@@ -351,9 +283,9 @@ export default function ReviewAndPublishStep() {
 						Liferay.Language.get('showing-x-to-x-of-x-entries'),
 						String((page - 1) * pageSize + 1),
 						String(
-							Math.min(page * pageSize, TOTAL_ENTRIES)
+							Math.min(page * pageSize, filteredEntries.length)
 						),
-						String(TOTAL_ENTRIES)
+						String(filteredEntries.length)
 					)}
 				</ClayPaginationBar.Results>
 
@@ -365,7 +297,7 @@ export default function ReviewAndPublishStep() {
 						'title': Liferay.Language.get('more'),
 					}}
 					onPageChange={setPage}
-					totalPages={Math.ceil(TOTAL_ENTRIES / pageSize)}
+					totalPages={Math.ceil(filteredEntries.length / pageSize)}
 				/>
 			</ClayPaginationBar>
 		</div>

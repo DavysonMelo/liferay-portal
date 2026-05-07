@@ -5,8 +5,6 @@
  */
 --%>
 
-<%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
-
 <%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %><%@
 taglib uri="http://liferay.com/tld/frontend-data-set" prefix="frontend-data-set" %><%@
 taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
@@ -20,4 +18,6 @@ page import="com.liferay.portal.kernel.util.HashMapBuilder" %>
 
 <liferay-theme:defineObjects />
 
-<portlet:defineObjects />
+<%
+ContentSiteGeneratorDisplayContext contentSiteGeneratorDisplayContext = (ContentSiteGeneratorDisplayContext)request.getAttribute(ContentSiteGeneratorDisplayContext.class.getName());
+%>

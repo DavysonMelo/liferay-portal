@@ -11,6 +11,7 @@ import com.liferay.content.site.generator.web.internal.display.context.ViewGener
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.WebKeys;
 
 import jakarta.portlet.Portlet;
 import jakarta.portlet.PortletException;
@@ -55,7 +56,7 @@ public class ContentSiteGeneratorPortlet extends MVCPortlet {
 			_portal.getLiferayPortletResponse(renderResponse);
 
 		renderRequest.setAttribute(
-			ContentSiteGeneratorDisplayContext.class.getName(),
+			WebKeys.PORTLET_DISPLAY_CONTEXT,
 			new ContentSiteGeneratorDisplayContext(liferayPortletResponse));
 		renderRequest.setAttribute(
 			ViewGenerationsDisplayContext.class.getName(),
