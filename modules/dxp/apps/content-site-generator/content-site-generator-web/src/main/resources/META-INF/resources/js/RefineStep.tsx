@@ -10,7 +10,6 @@ import ClayLabel from '@clayui/label';
 import ClayLayout from '@clayui/layout';
 import ClayList from '@clayui/list';
 import ClayPanel from '@clayui/panel';
-import {sub} from 'frontend-js-web';
 import React, {useState} from 'react';
 
 import ContentSampleItem from './components/ContentSampleItem';
@@ -33,8 +32,6 @@ import type {DetectedConfigItem} from './types/DetectedConfigItem';
 import type {GeneratedItem} from './types/GeneratedItem';
 import type {SummaryItem} from './types/SummaryItem';
 import type {Template} from './types/Template';
-
-const URL_PROMPT = new URLSearchParams(window.location.search).get('prompt');
 
 interface IProps {
 	attachments?: string[];
@@ -63,11 +60,16 @@ export default function RefineStep({
 	onBack,
 	onCancel,
 	onContinue,
-	prompt = URL_PROMPT ?? MOCK_PROMPT,
+	prompt,
 	summary = MOCK_SUMMARY,
 	templates = MOCK_TEMPLATES,
 }: IProps) {
 	const [showTip, setShowTip] = useState(true);
+
+	const resolvedPrompt =
+		prompt ??
+		new URLSearchParams(window.location.search).get('prompt') ??
+		MOCK_PROMPT;
 
 	const {handleBack, handleCancel, handleContinue} = useStepNavigation({
 		backURL,
@@ -126,17 +128,17 @@ export default function RefineStep({
 							{Liferay.Language.get('your-prompt')}
 						</h4>
 
-						{prompt && (
+						{resolvedPrompt && (
 							<>
 								<p className="content-site-generator-refine__prompt">
-									{`"${prompt}"`}
+									{`"${resolvedPrompt}"`}
 								</p>
 
 								<div className="dropdown-divider" />
 
 								<p className="content-site-generator-refine__attachments-label text-secondary">
 									{attachments.length
-										? sub(
+										? Liferay.Util.sub(
 												Liferay.Language.get(
 													'attached-files-x'
 												),
@@ -244,7 +246,7 @@ export default function RefineStep({
 											</h5>
 
 											<span className="content-site-generator-refine__template-entries text-secondary">
-												{sub(
+												{Liferay.Util.sub(
 													Liferay.Language.get(
 														'x-entries'
 													),
@@ -318,7 +320,7 @@ export default function RefineStep({
 
 				<section>
 					<h3 className="mb-3">
-						{Liferay.Language.get('what-will-be-generated?')}
+						{Liferay.Language.get('what-will-be-generated')}
 					</h3>
 
 					{generatedItems.length ? (
