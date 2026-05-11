@@ -318,7 +318,7 @@ export default function RefineStep({
 
 				<section>
 					<h3 className="mb-3">
-						{Liferay.Language.get('what-will-be-generated?')}
+						{Liferay.Language.get('what-will-be-generated')}
 					</h3>
 
 					{generatedItems.length ? (
