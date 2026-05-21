@@ -87,39 +87,58 @@ public class ProvisioningRequestResourceTest
 
 		provisioningRequestResource.postProvisioning(provisioningRequest);
 
-		AccountEntry accountEntry =
+		AccountEntry customerAccountEntry =
 			_accountEntryLocalService.getAccountEntryByExternalReferenceCode(
 				customerName, TestPropsValues.getCompanyId());
 
-		Assert.assertEquals(customerName, accountEntry.getName());
+		Assert.assertEquals(customerName, customerAccountEntry.getName());
 
-		User user = _userLocalService.getUserByScreenName(
+		User serviceAccountUser = _userLocalService.getUserByScreenName(
 			TestPropsValues.getCompanyId(), customerName + "-service-account");
 
-		Assert.assertEquals(UserConstants.TYPE_SERVICE_ACCOUNT, user.getType());
+		Assert.assertEquals(
+			UserConstants.TYPE_SERVICE_ACCOUNT, serviceAccountUser.getType());
+
+		User guestServiceAccountUser = _userLocalService.getUserByScreenName(
+			TestPropsValues.getCompanyId(),
+			customerName + "-guest-service-account");
+
+		Assert.assertEquals(
+			UserConstants.TYPE_SERVICE_ACCOUNT,
+			guestServiceAccountUser.getType());
 
 		Assert.assertNotNull(
 			_accountEntryUserRelLocalService.fetchAccountEntryUserRel(
-				accountEntry.getAccountEntryId(), user.getUserId()));
+				customerAccountEntry.getAccountEntryId(),
+				serviceAccountUser.getUserId()));
+		Assert.assertNotNull(
+			_accountEntryUserRelLocalService.fetchAccountEntryUserRel(
+				customerAccountEntry.getAccountEntryId(),
+				guestServiceAccountUser.getUserId()));
 
 		ObjectDefinition objectDefinition =
 			_objectDefinitionLocalService.
 				getObjectDefinitionByExternalReferenceCode(
 					"L_AI_HUB_QUOTA", TestPropsValues.getCompanyId());
 
-		long accountEntryId = accountEntry.getAccountEntryId();
+		long accountEntryId = customerAccountEntry.getAccountEntryId();
 
 		_assertQuotaObjectEntry(
 			objectDefinition, "guest-quota-" + accountEntryId);
 		_assertQuotaObjectEntry(objectDefinition, "quota-" + accountEntryId);
 
-		accountEntry =
+		AccountEntry aiHubAccountEntry =
 			_accountEntryLocalService.getAccountEntryByExternalReferenceCode(
 				"L_AI_HUB", TestPropsValues.getCompanyId());
 
 		Assert.assertNotNull(
 			_accountEntryUserRelLocalService.fetchAccountEntryUserRel(
-				accountEntry.getAccountEntryId(), user.getUserId()));
+				aiHubAccountEntry.getAccountEntryId(),
+				serviceAccountUser.getUserId()));
+		Assert.assertNotNull(
+			_accountEntryUserRelLocalService.fetchAccountEntryUserRel(
+				aiHubAccountEntry.getAccountEntryId(),
+				guestServiceAccountUser.getUserId()));
 	}
 
 	private void _assertQuotaObjectEntry(

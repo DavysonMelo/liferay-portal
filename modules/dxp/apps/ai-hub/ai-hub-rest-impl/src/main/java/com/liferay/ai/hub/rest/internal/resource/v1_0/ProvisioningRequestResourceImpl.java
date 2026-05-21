@@ -67,16 +67,23 @@ public class ProvisioningRequestResourceImpl
 
 		AccountEntry customerAccountEntry = _getOrAddAccountEntry(
 			provisioningRequest.getCustomerName(), serviceContext);
+
+		long[] accountEntryIds = {
+			aiHubAccountEntry.getAccountEntryId(),
+			customerAccountEntry.getAccountEntryId()
+		};
+
 		User serviceAccountUser = _getOrAddUser(
 			provisioningRequest.getCustomerName() + "-service-account",
 			serviceContext);
+		User guestServiceAccountUser = _getOrAddUser(
+			provisioningRequest.getCustomerName() + "-guest-service-account",
+			serviceContext);
 
 		_accountEntryUserRelLocalService.updateAccountEntryUserRels(
-			new long[] {
-				aiHubAccountEntry.getAccountEntryId(),
-				customerAccountEntry.getAccountEntryId()
-			},
-			new long[0], serviceAccountUser.getUserId());
+			accountEntryIds, new long[0], serviceAccountUser.getUserId());
+		_accountEntryUserRelLocalService.updateAccountEntryUserRels(
+			accountEntryIds, new long[0], guestServiceAccountUser.getUserId());
 
 		_addQuotas(customerAccountEntry, serviceContext);
 	}
