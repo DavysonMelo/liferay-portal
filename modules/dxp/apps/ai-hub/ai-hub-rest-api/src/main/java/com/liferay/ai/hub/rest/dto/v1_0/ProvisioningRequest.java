@@ -88,6 +88,47 @@ public class ProvisioningRequest implements Serializable {
 	@JsonIgnore
 	private Supplier<String> _customerNameSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema
+	public String getLiferayDXPURL() {
+		if (_liferayDXPURLSupplier != null) {
+			liferayDXPURL = _liferayDXPURLSupplier.get();
+
+			_liferayDXPURLSupplier = null;
+		}
+
+		return liferayDXPURL;
+	}
+
+	public void setLiferayDXPURL(String liferayDXPURL) {
+		this.liferayDXPURL = liferayDXPURL;
+
+		_liferayDXPURLSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setLiferayDXPURL(
+		UnsafeSupplier<String, Exception> liferayDXPURLUnsafeSupplier) {
+
+		_liferayDXPURLSupplier = () -> {
+			try {
+				return liferayDXPURLUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String liferayDXPURL;
+
+	@JsonIgnore
+	private Supplier<String> _liferayDXPURLSupplier;
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -127,6 +168,22 @@ public class ProvisioningRequest implements Serializable {
 			sb.append("\"");
 
 			sb.append(_escape(customerName));
+
+			sb.append("\"");
+		}
+
+		String liferayDXPURL = getLiferayDXPURL();
+
+		if (liferayDXPURL != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"liferayDXPURL\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(liferayDXPURL));
 
 			sb.append("\"");
 		}
@@ -232,4 +289,4 @@ public class ProvisioningRequest implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:913423964
+// LIFERAY-REST-BUILDER-HASH:-1162225226

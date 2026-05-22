@@ -10,6 +10,9 @@ import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.ai.hub.rest.client.dto.v1_0.ProvisioningRequest;
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.oauth2.provider.constants.GrantType;
+import com.liferay.oauth2.provider.model.OAuth2Application;
+import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -25,6 +28,7 @@ import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.site.initializer.SiteInitializer;
@@ -32,6 +36,7 @@ import com.liferay.site.initializer.SiteInitializerRegistry;
 
 import java.io.Serializable;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.junit.AfterClass;
@@ -82,6 +87,8 @@ public class ProvisioningRequestResourceTest
 	@Test
 	public void testPostProvisioning() throws Exception {
 		ProvisioningRequest provisioningRequest = randomProvisioningRequest();
+
+		provisioningRequest.setLiferayDXPURL("https://example.com");
 
 		String customerName = provisioningRequest.getCustomerName();
 
@@ -139,6 +146,27 @@ public class ProvisioningRequestResourceTest
 			_accountEntryUserRelLocalService.fetchAccountEntryUserRel(
 				aiHubAccountEntry.getAccountEntryId(),
 				guestServiceAccountUser.getUserId()));
+
+		OAuth2Application oAuth2Application =
+			_oAuth2ApplicationLocalService.
+				fetchOAuth2ApplicationByExternalReferenceCode(
+					StringUtil.toUpperCase(customerName + "-ai-hub"),
+					TestPropsValues.getCompanyId());
+
+		Assert.assertNotNull(oAuth2Application);
+		Assert.assertEquals("AI Hub", oAuth2Application.getName());
+		Assert.assertEquals(
+			Collections.singletonList(GrantType.CLIENT_CREDENTIALS),
+			oAuth2Application.getAllowedGrantTypesList());
+		Assert.assertEquals(
+			serviceAccountUser.getUserId(),
+			oAuth2Application.getClientCredentialUserId());
+		Assert.assertEquals(
+			provisioningRequest.getLiferayDXPURL(),
+			oAuth2Application.getHomePageURL());
+		Assert.assertEquals(
+			Collections.singletonList(provisioningRequest.getLiferayDXPURL()),
+			oAuth2Application.getRedirectURIsList());
 	}
 
 	private void _assertQuotaObjectEntry(
@@ -167,6 +195,9 @@ public class ProvisioningRequestResourceTest
 
 	@Inject
 	private AccountEntryUserRelLocalService _accountEntryUserRelLocalService;
+
+	@Inject
+	private OAuth2ApplicationLocalService _oAuth2ApplicationLocalService;
 
 	@Inject
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;

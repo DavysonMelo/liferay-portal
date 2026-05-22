@@ -12,6 +12,11 @@ import com.liferay.account.service.AccountEntryUserRelLocalService;
 import com.liferay.ai.hub.rest.dto.v1_0.ProvisioningRequest;
 import com.liferay.ai.hub.rest.resource.v1_0.ProvisioningRequestResource;
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
+import com.liferay.oauth2.provider.constants.ClientProfile;
+import com.liferay.oauth2.provider.constants.GrantType;
+import com.liferay.oauth2.provider.model.OAuth2Application;
+import com.liferay.oauth2.provider.service.OAuth2ApplicationLocalService;
+import com.liferay.oauth2.provider.util.OAuth2SecureRandomGenerator;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
@@ -24,11 +29,13 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.io.Serializable;
 
 import java.util.Calendar;
+import java.util.Collections;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -84,6 +91,9 @@ public class ProvisioningRequestResourceImpl
 			accountEntryIds, new long[0], serviceAccountUser.getUserId());
 		_accountEntryUserRelLocalService.updateAccountEntryUserRels(
 			accountEntryIds, new long[0], guestServiceAccountUser.getUserId());
+
+		_getOrAddOAuth2Application(
+			provisioningRequest, serviceAccountUser, serviceContext);
 
 		_addQuotas(customerAccountEntry, serviceContext);
 	}
@@ -153,6 +163,38 @@ public class ProvisioningRequestResourceImpl
 			WorkflowConstants.STATUS_APPROVED, serviceContext);
 	}
 
+	private OAuth2Application _getOrAddOAuth2Application(
+			ProvisioningRequest provisioningRequest, User clientCredentialUser,
+			ServiceContext serviceContext)
+		throws Exception {
+
+		String externalReferenceCode = StringUtil.toUpperCase(
+			provisioningRequest.getCustomerName() + "-ai-hub");
+
+		OAuth2Application oAuth2Application =
+			_oAuth2ApplicationLocalService.
+				fetchOAuth2ApplicationByExternalReferenceCode(
+					externalReferenceCode, contextCompany.getCompanyId());
+
+		if (oAuth2Application != null) {
+			return oAuth2Application;
+		}
+
+		String portalURL = provisioningRequest.getLiferayDXPURL();
+
+		return _oAuth2ApplicationLocalService.addOrUpdateOAuth2Application(
+			externalReferenceCode, contextUser.getUserId(),
+			contextUser.getFullName(),
+			Collections.singletonList(GrantType.CLIENT_CREDENTIALS),
+			"client_secret_post", clientCredentialUser.getUserId(),
+			OAuth2SecureRandomGenerator.generateClientId(),
+			ClientProfile.HEADLESS_SERVER.id(),
+			OAuth2SecureRandomGenerator.generateClientSecret(), null,
+			Collections.emptyList(), portalURL, 0, null, "AI Hub", null,
+			Collections.singletonList(portalURL), false,
+			Collections.emptyList(), false, serviceContext);
+	}
+
 	private User _getOrAddUser(String screenName, ServiceContext serviceContext)
 		throws Exception {
 
@@ -185,6 +227,9 @@ public class ProvisioningRequestResourceImpl
 
 	@Reference
 	private AccountEntryUserRelLocalService _accountEntryUserRelLocalService;
+
+	@Reference
+	private OAuth2ApplicationLocalService _oAuth2ApplicationLocalService;
 
 	@Reference
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;

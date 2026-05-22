@@ -169,6 +169,7 @@ public abstract class BaseProvisioningRequestResourceTestCase {
 		ProvisioningRequest provisioningRequest = randomProvisioningRequest();
 
 		provisioningRequest.setCustomerName(regex);
+		provisioningRequest.setLiferayDXPURL(regex);
 
 		String json = ProvisioningRequestSerDes.toJSON(provisioningRequest);
 
@@ -177,6 +178,7 @@ public abstract class BaseProvisioningRequestResourceTestCase {
 		provisioningRequest = ProvisioningRequestSerDes.toDTO(json);
 
 		Assert.assertEquals(regex, provisioningRequest.getCustomerName());
+		Assert.assertEquals(regex, provisioningRequest.getLiferayDXPURL());
 	}
 
 	@Test
@@ -274,6 +276,14 @@ public abstract class BaseProvisioningRequestResourceTestCase {
 
 			if (Objects.equals("customerName", additionalAssertFieldName)) {
 				if (provisioningRequest.getCustomerName() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("liferayDXPURL", additionalAssertFieldName)) {
+				if (provisioningRequest.getLiferayDXPURL() == null) {
 					valid = false;
 				}
 
@@ -405,6 +415,17 @@ public abstract class BaseProvisioningRequestResourceTestCase {
 				if (!Objects.deepEquals(
 						provisioningRequest1.getCustomerName(),
 						provisioningRequest2.getCustomerName())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("liferayDXPURL", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						provisioningRequest1.getLiferayDXPURL(),
+						provisioningRequest2.getLiferayDXPURL())) {
 
 					return false;
 				}
@@ -566,6 +587,52 @@ public abstract class BaseProvisioningRequestResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("liferayDXPURL")) {
+			Object object = provisioningRequest.getLiferayDXPURL();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		throw new IllegalArgumentException(
 			"Invalid entity field " + entityFieldName);
 	}
@@ -614,6 +681,8 @@ public abstract class BaseProvisioningRequestResourceTestCase {
 		return new ProvisioningRequest() {
 			{
 				customerName = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				liferayDXPURL = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 			}
 		};
@@ -844,4 +913,4 @@ public abstract class BaseProvisioningRequestResourceTestCase {
 		_provisioningRequestResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:665874748
+// LIFERAY-REST-BUILDER-HASH:-1842742352
