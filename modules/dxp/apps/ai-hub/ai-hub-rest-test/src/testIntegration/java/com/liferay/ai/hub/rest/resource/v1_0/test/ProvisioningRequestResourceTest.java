@@ -5,6 +5,7 @@
 
 package com.liferay.ai.hub.rest.resource.v1_0.test;
 
+import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.account.service.AccountEntryUserRelLocalService;
@@ -37,6 +38,7 @@ import com.liferay.site.initializer.SiteInitializerRegistry;
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.AfterClass;
@@ -94,17 +96,25 @@ public class ProvisioningRequestResourceTest
 
 		provisioningRequestResource.postProvisioning(provisioningRequest);
 
-		AccountEntry customerAccountEntry =
-			_accountEntryLocalService.getAccountEntryByExternalReferenceCode(
-				customerName, TestPropsValues.getCompanyId());
-
-		Assert.assertEquals(customerName, customerAccountEntry.getName());
-
 		User serviceAccountUser = _userLocalService.getUserByScreenName(
 			TestPropsValues.getCompanyId(), customerName + "-service-account");
 
 		Assert.assertEquals(
 			UserConstants.TYPE_SERVICE_ACCOUNT, serviceAccountUser.getType());
+
+		List<AccountEntry> customerAccountEntries =
+			_accountEntryLocalService.getUserAccountEntries(
+				serviceAccountUser.getUserId(),
+				AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT, customerName,
+				null, 0, 1);
+
+		Assert.assertEquals(
+			customerAccountEntries.toString(), 1,
+			customerAccountEntries.size());
+
+		AccountEntry customerAccountEntry = customerAccountEntries.get(0);
+
+		Assert.assertEquals(customerName, customerAccountEntry.getName());
 
 		User guestServiceAccountUser = _userLocalService.getUserByScreenName(
 			TestPropsValues.getCompanyId(),
