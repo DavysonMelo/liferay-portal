@@ -11,6 +11,7 @@ import {cancelDebounce, debounce} from 'frontend-js-web';
 import React from 'react';
 import {Root, createRoot} from 'react-dom/client';
 
+import ReportFeedbackModal from '../ReportFeedback/ReportFeedbackModal';
 import {createEventSource, postAgentInstance} from './api';
 import WritingAssistantActions from './components/WritingAssistantActions';
 import WritingAssistantConfirmationAction from './components/WritingAssistantConfirmationAction';
@@ -20,7 +21,10 @@ export default class WritingAssistant extends Plugin {
 	public balloonView: View | null = null;
 	public contentSelection: string = '';
 	public eventSourceReference: string = '';
+	public lastActionType: EActionType | null = null;
 	public reactRoot: Root | null = null;
+	public reportModalElement: HTMLDivElement | null = null;
+	public reportModalRoot: Root | null = null;
 	public confirmationBalloonOpen: boolean = false;
 
 	static get requires() {
@@ -92,6 +96,7 @@ export default class WritingAssistant extends Plugin {
 
 		this.editor.on('destroy', () => {
 			cancelDebounce(debouncedSelectionCheck);
+			this._hideReportFeedbackModal();
 		});
 	}
 
@@ -228,6 +233,8 @@ export default class WritingAssistant extends Plugin {
 				<WritingAssistantActions
 					containerRef={reactView.element}
 					handleActionClick={async (type: EActionType) => {
+						this.lastActionType = type;
+
 						await postAgentInstance(
 							this.contentSelection,
 							this.eventSourceReference,
@@ -248,6 +255,40 @@ export default class WritingAssistant extends Plugin {
 			view: this.balloonView,
 			withArrow: false,
 		});
+	}
+
+	_hideReportFeedbackModal() {
+		if (this.reportModalRoot) {
+			this.reportModalRoot.unmount();
+			this.reportModalRoot = null;
+		}
+
+		if (this.reportModalElement) {
+			this.reportModalElement.remove();
+			this.reportModalElement = null;
+		}
+	}
+
+	_showReportFeedbackModal() {
+		this._hideReportFeedbackModal();
+
+		const element = document.createElement('div');
+
+		document.body.appendChild(element);
+
+		const root = createRoot(element);
+
+		root.render(
+			<ReportFeedbackModal
+				agentId={this.lastActionType ?? ''}
+				onClose={() => this._hideReportFeedbackModal()}
+				surface="CMS_ASSISTANT"
+				traceId={this.eventSourceReference}
+			/>
+		);
+
+		this.reportModalElement = element;
+		this.reportModalRoot = root;
 	}
 
 	_showConfimationBalloon(balloon: ContextualBalloon, editor: Editor) {
@@ -290,6 +331,7 @@ export default class WritingAssistant extends Plugin {
 						this.confirmationBalloonOpen = false;
 						this._hideBalloon(balloon);
 					}}
+					onReport={() => this._showReportFeedbackModal()}
 				/>
 			);
 
