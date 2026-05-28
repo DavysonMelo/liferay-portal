@@ -59,6 +59,13 @@ public class SseUtil {
 	public static void send(
 		String data, String name, String nodeName, String sseEventSinkKey) {
 
+		send(data, name, nodeName, null, null, sseEventSinkKey);
+	}
+
+	public static void send(
+		String data, String name, String nodeName, String agentName,
+		String agentERC, String sseEventSinkKey) {
+
 		if (Validator.isBlank(sseEventSinkKey)) {
 			return;
 		}
@@ -71,6 +78,10 @@ public class SseUtil {
 			).data(
 				String.class,
 				JSONUtil.put(
+					"agentERC", agentERC
+				).put(
+					"agentName", agentName
+				).put(
 					"data", data
 				).put(
 					"nodeName", nodeName
