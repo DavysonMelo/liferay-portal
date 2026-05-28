@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.security.auth.CompanyInheritableThreadLocalCall
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -38,13 +39,18 @@ import com.liferay.portal.workflow.manager.WorkflowDefinitionManager;
 
 import dev.langchain4j.agentic.AgenticServices;
 import dev.langchain4j.agentic.internal.InternalAgent;
+import dev.langchain4j.agentic.scope.AgentInvocation;
+import dev.langchain4j.agentic.scope.AgenticScope;
+import dev.langchain4j.agentic.scope.ResultWithAgenticScope;
 import dev.langchain4j.agentic.supervisor.SupervisorContextStrategy;
 import dev.langchain4j.agentic.supervisor.SupervisorResponseStrategy;
 import dev.langchain4j.model.vertexai.gemini.VertexAiGeminiChatModel;
 
 import java.lang.reflect.InvocationTargetException;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -60,7 +66,10 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 
 	@Override
 	public void invoke(AgentContext agentContext) {
-		InternalAgent[] internalAgents = _createInternalAgents(agentContext);
+		Map<String, String> agentTitles = new HashMap<>();
+
+		InternalAgent[] internalAgents = _createInternalAgents(
+			agentContext, agentTitles);
 
 		PermissionChecker permissionChecker =
 			PermissionThreadLocal.getPermissionChecker();
@@ -79,7 +88,7 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 							permissionChecker);
 
 						_invoke(
-							agentContext, internalAgents,
+							agentContext, agentTitles, internalAgents,
 							vertexAiGeminiChatModel);
 					}
 					catch (Exception exception) {
@@ -105,7 +114,9 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 		_noticeableExecutorService.shutdown();
 	}
 
-	private InternalAgent[] _createInternalAgents(AgentContext agentContext) {
+	private InternalAgent[] _createInternalAgents(
+		AgentContext agentContext, Map<String, String> agentTitles) {
+
 		try {
 			Page<ObjectEntry> page = _objectEntryManager.getObjectEntries(
 				agentContext.getCompanyId(),
@@ -114,6 +125,14 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 				null, null, agentContext.getDTOConverterContext(),
 				_getFilterString(agentContext), Pagination.of(1, 20), null,
 				null);
+
+			for (ObjectEntry objectEntry : page.getItems()) {
+				agentTitles.put(
+					GetterUtil.getString(
+						objectEntry.getPropertyValue("externalReferenceCode")),
+					GetterUtil.getString(
+						objectEntry.getPropertyValue("title")));
+			}
 
 			InternalAgentFactory internalAgentFactory =
 				new InternalAgentFactory(
@@ -218,7 +237,8 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 	}
 
 	private void _invoke(
-			AgentContext agentContext, InternalAgent[] internalAgents,
+			AgentContext agentContext, Map<String, String> agentTitles,
+			InternalAgent[] internalAgents,
 			VertexAiGeminiChatModel vertexAiGeminiChatModel)
 		throws PortalException {
 
@@ -244,9 +264,29 @@ public class SupervisorAgentImpl implements SupervisorAgent {
 				SupervisorResponseStrategy.SCORED
 			).build();
 
+		ResultWithAgenticScope<String> resultWithAgenticScope =
+			supervisorAgent.invokeWithAgenticScope(message);
+
+		AgenticScope agenticScope = resultWithAgenticScope.agenticScope();
+
+		List<AgentInvocation> agentInvocations =
+			agenticScope.agentInvocations();
+
+		String lastAgentERC = null;
+		String lastAgentName = null;
+
+		if (!agentInvocations.isEmpty()) {
+			AgentInvocation lastAgentInvocation = agentInvocations.get(
+				agentInvocations.size() - 1);
+
+			lastAgentERC = lastAgentInvocation.agentName();
+
+			lastAgentName = agentTitles.get(lastAgentERC);
+		}
+
 		SseUtil.send(
-			supervisorAgent.invoke(message), "Chat Message Sent", null,
-			agentContext.getSseEventSinkKey());
+			resultWithAgenticScope.result(), "Chat Message Sent", null,
+			lastAgentName, lastAgentERC, agentContext.getSseEventSinkKey());
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
