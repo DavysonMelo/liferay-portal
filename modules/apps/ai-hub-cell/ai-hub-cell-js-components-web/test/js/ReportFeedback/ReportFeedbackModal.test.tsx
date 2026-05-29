@@ -28,9 +28,9 @@ function renderModal(
 ) {
 	return render(
 		<ReportFeedbackModal
-			agentId="agent-1"
+			agentDefinitionExternalReferenceCodes={['agent-1']}
 			onClose={jest.fn()}
-			surface="AI_ASSISTANT"
+			surface="aiAssistant"
 			traceId="trace-1"
 			{...props}
 		/>
@@ -74,7 +74,7 @@ describe('ReportFeedbackModal', () => {
 		expect(send).toBeDisabled();
 
 		fireEvent.change(screen.getByRole('combobox'), {
-			target: {value: 'OTHER'},
+			target: {value: 'other'},
 		});
 
 		expect(send).toBeEnabled();
@@ -89,7 +89,7 @@ describe('ReportFeedbackModal', () => {
 		renderModal({onClose, onSubmitted});
 
 		fireEvent.change(await screen.findByRole('combobox'), {
-			target: {value: 'INCORRECT_OR_INACCURATE_RESPONSE'},
+			target: {value: 'incorrect'},
 		});
 		fireEvent.click(screen.getByRole('button', {name: 'send'}));
 
@@ -97,9 +97,9 @@ describe('ReportFeedbackModal', () => {
 
 		expect(mockPostAIIssueReport).toHaveBeenCalledWith(
 			expect.objectContaining({
-				agentId: 'agent-1',
-				reason: 'INCORRECT_OR_INACCURATE_RESPONSE',
-				surface: 'AI_ASSISTANT',
+				agentDefinitionExternalReferenceCodes: ['agent-1'],
+				reason: 'incorrect',
+				surface: 'aiAssistant',
 				traceId: 'trace-1',
 			})
 		);
@@ -117,7 +117,7 @@ describe('ReportFeedbackModal', () => {
 		renderModal({onSubmitted});
 
 		fireEvent.change(await screen.findByRole('combobox'), {
-			target: {value: 'OTHER'},
+			target: {value: 'other'},
 		});
 		fireEvent.click(screen.getByRole('button', {name: 'send'}));
 

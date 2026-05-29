@@ -280,9 +280,11 @@ export default class WritingAssistant extends Plugin {
 
 		root.render(
 			<ReportFeedbackModal
-				agentId={this.lastActionType ?? ''}
+				agentDefinitionExternalReferenceCodes={
+					this.lastActionType ? [this.lastActionType] : []
+				}
 				onClose={() => this._hideReportFeedbackModal()}
-				surface="CMS_ASSISTANT"
+				surface="aiAssistant"
 				traceId={this.eventSourceReference}
 			/>
 		);
