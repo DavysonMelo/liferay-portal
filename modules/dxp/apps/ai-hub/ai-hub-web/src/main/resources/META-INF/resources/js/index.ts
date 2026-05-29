@@ -11,4 +11,6 @@ export {default as ConfigurationForm} from './configuration_form/ConfigurationFo
 export {default as ContentRetrieverForm} from './content_retriever_form/ContentRetrieverForm';
 export {default as HomeDashboard} from './home_dashboard/HomeDashboard';
 export {default as InstructionDefinitionForm} from './instruction_definition_form/InstructionDefinitionForm';
+export {default as IssueReportsCards} from './issue_reports_cards/IssueReportsCards';
+export {default as IssueReportsPropsTransformer} from './issue_reports_table/IssueReportsPropsTransformer';
 export {default as ModelArmorTemplateForm} from './model_armor_template_form/ModelArmorTemplateForm';
