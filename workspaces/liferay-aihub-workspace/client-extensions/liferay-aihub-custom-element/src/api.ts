@@ -12,9 +12,26 @@ const AI_HUB_ENDPOINT = '/o/ai-hub/v1.0';
 let aiHubURL = '';
 let liferayDXPURL = '';
 
+// Tri-state cache for whether this DXP exposes the AI Hub cell backend:
+// null = not yet probed, true = available, false = absent (404). Prevents
+// re-probing /o/ai-hub-cell on every message once the answer is known.
+
+let cellAuthorizationAvailable: boolean | null = null;
+
 export function setURLs(aiHub: string, liferayDXP: string) {
 	aiHubURL = aiHub;
 	liferayDXPURL = liferayDXP;
+}
+
+// The widget attempts DXP cell authentication only when it is running on a
+// Liferay page and the cell backend has not already been found absent. When
+// it is absent (older DXPs, or Click to Chat's AI Hub not enabled), the
+// widget runs DXP-agnostic.
+
+function shouldUseCellAuthorization(): boolean {
+	return (
+		Boolean((window as any).Liferay) && cellAuthorizationAvailable !== false
+	);
 }
 
 async function postAuthorizationToken(): Promise<AuthorizationToken | null> {
@@ -30,6 +47,16 @@ async function postAuthorizationToken(): Promise<AuthorizationToken | null> {
 				method: 'POST',
 			}
 		);
+
+		// A 404 means this DXP does not have the AI Hub cell backend
+		// installed. Remember it so the widget stops probing and falls
+		// back to DXP-agnostic mode.
+
+		if (response.status === 404) {
+			cellAuthorizationAvailable = false;
+
+			return null;
+		}
 
 		if (!response.ok) {
 			throw new Error(
@@ -51,11 +78,11 @@ async function postAuthorizationToken(): Promise<AuthorizationToken | null> {
 			throw new Error('Unable to find service URL.');
 		}
 
+		cellAuthorizationAvailable = true;
+
 		return data as AuthorizationToken;
 	}
-	catch (error) {
-		console.warn(error instanceof Error ? error.message : String(error));
-
+	catch {
 		return null;
 	}
 }
@@ -86,7 +113,7 @@ export async function createEventSource(): Promise<EventSource | null> {
 		fetch: async (input, init) => {
 			const headers = new Headers({Accept: 'text/event-stream'});
 
-			if ((window as any).Liferay) {
+			if (shouldUseCellAuthorization()) {
 				const authorizationToken = await postAuthorizationToken();
 
 				if (authorizationToken?.accessToken) {
@@ -116,23 +143,19 @@ export async function postChatMessage(
 		'Content-Type': 'application/json',
 	});
 
-	if ((window as any).Liferay) {
+	if (shouldUseCellAuthorization()) {
 		const authorizationToken = await postAuthorizationToken();
 
-		if (!authorizationToken) {
-			throw new Error(
-				'Unable to obtain authorization token for chat message.'
+		if (authorizationToken) {
+			headers.set(
+				'Authorization',
+				`Bearer ${authorizationToken.accessToken}`
+			);
+			headers.set(
+				'Liferay-AI-Hub-Cell-On-Behalf-Of',
+				authorizationToken.userToken
 			);
 		}
-
-		headers.set(
-			'Authorization',
-			`Bearer ${authorizationToken.accessToken}`
-		);
-		headers.set(
-			'Liferay-AI-Hub-Cell-On-Behalf-Of',
-			authorizationToken.userToken
-		);
 	}
 
 	return fetch(
