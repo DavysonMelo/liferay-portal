@@ -32,27 +32,19 @@ public class IssueReportFDSSorts implements FDSSorts {
 		HttpServletRequest httpServletRequest) {
 
 		return FDSSortItemListBuilder.add(
-			_sortItem(httpServletRequest, "date", "date", "desc", true)
-		).add(
-			_sortItem(
-				httpServletRequest, "agentName", "agent-name", "asc", false)
+			_sortItem(httpServletRequest, "dateCreated", "date", "desc", true)
 		).add(
 			_sortItem(httpServletRequest, "surface", "surface", "asc", false)
 		).add(
 			_sortItem(
-				httpServletRequest, "feedbackType", "feedback-type", "asc",
-				false)
+				httpServletRequest, "feedback", "feedback-type", "asc", false)
 		).add(
-			_sortItem(
-				httpServletRequest, "issueType", "issue-type", "asc", false)
+			_sortItem(httpServletRequest, "reason", "issue-type", "asc", false)
 		).add(
 			_sortItem(httpServletRequest, "level", "level", "asc", false)
 		).add(
 			_sortItem(
 				httpServletRequest, "userMessage", "user-message", "asc", false)
-		).add(
-			_sortItem(
-				httpServletRequest, "userEmail", "user-email", "asc", false)
 		).build();
 	}
 
