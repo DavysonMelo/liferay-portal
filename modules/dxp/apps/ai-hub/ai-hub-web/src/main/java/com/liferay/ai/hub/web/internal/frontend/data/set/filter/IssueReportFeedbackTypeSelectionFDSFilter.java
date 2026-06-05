@@ -27,7 +27,7 @@ public class IssueReportFeedbackTypeSelectionFDSFilter
 
 	@Override
 	public String getId() {
-		return "feedbackType";
+		return "feedback";
 	}
 
 	@Override

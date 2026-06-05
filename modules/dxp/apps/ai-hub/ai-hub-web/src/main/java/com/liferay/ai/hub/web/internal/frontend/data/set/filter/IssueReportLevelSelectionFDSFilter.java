@@ -42,7 +42,8 @@ public class IssueReportLevelSelectionFDSFilter extends BaseSelectionFDSFilter {
 			new SelectionFDSFilterItem("CRITICAL", "critical"),
 			new SelectionFDSFilterItem("HIGH", "high"),
 			new SelectionFDSFilterItem("MEDIUM", "medium"),
-			new SelectionFDSFilterItem("LOW", "low"));
+			new SelectionFDSFilterItem("LOW", "low"),
+			new SelectionFDSFilterItem("OTHER", "other"));
 	}
 
 }
