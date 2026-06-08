@@ -104,8 +104,10 @@ public class AIHubCellAccessTokenWebCacheItem implements WebCacheItem {
 			if (expirationTime > 0) {
 				jsonObject.put("expirationTime", expirationTime);
 
-				_refreshTime =
-					(long)((expirationTime - System.currentTimeMillis()) * 0.8);
+				_refreshTime = Math.max(
+					0,
+					(long)
+						((expirationTime - System.currentTimeMillis()) * 0.8));
 			}
 
 			return jsonObject;
