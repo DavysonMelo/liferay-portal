@@ -56,7 +56,7 @@ export default function HomeDashboard({
 	useEffect(() => {
 		let isMounted = true;
 
-		getAgentDefinitions()
+		getAgentDefinitions({pageSize: '4', sort: 'dateModified:desc'})
 			.then((data) => {
 				if (isMounted) {
 					setAgents(data?.items ?? []);
@@ -68,7 +68,7 @@ export default function HomeDashboard({
 				}
 			});
 
-		getChatbots()
+		getChatbots({pageSize: '4', sort: 'dateModified:desc'})
 			.then((data) => {
 				if (isMounted) {
 					setChatbots(data?.items ?? []);
@@ -156,7 +156,7 @@ export default function HomeDashboard({
 						title={item.title}
 					/>
 				)}
-				take={3}
+				take={4}
 				title={Liferay.Language.get('latest-chatbots')}
 			/>
 		</div>

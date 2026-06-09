@@ -17,8 +17,12 @@ const HEADERS = new Headers({
 	'Content-Type': 'application/json',
 });
 
-async function getChatbots() {
-	const response = await fetch(CHATBOT_BASE_URI, {
+async function getChatbots(params?: Record<string, string>) {
+	const url = params
+		? `${CHATBOT_BASE_URI}?${new URLSearchParams(params)}`
+		: CHATBOT_BASE_URI;
+
+	const response = await fetch(url, {
 		headers: HEADERS,
 		method: 'GET',
 	});
