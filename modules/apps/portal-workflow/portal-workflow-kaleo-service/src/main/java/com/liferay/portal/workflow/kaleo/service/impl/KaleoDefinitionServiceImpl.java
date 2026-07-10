@@ -103,9 +103,6 @@ public class KaleoDefinitionServiceImpl extends KaleoDefinitionServiceBaseImpl {
 			ServiceContext serviceContext)
 		throws PortalException {
 
-		_kaleoDefinitionModelResourcePermission.check(
-			getPermissionChecker(), null, ActionKeys.VIEW);
-
 		return _kaleoDefinitionLocalService.getScopeKaleoDefinitions(
 			scope, active, start, end, orderByComparator, serviceContext);
 	}
@@ -116,9 +113,6 @@ public class KaleoDefinitionServiceImpl extends KaleoDefinitionServiceBaseImpl {
 			OrderByComparator<KaleoDefinition> orderByComparator,
 			ServiceContext serviceContext)
 		throws PortalException {
-
-		_kaleoDefinitionModelResourcePermission.check(
-			getPermissionChecker(), null, ActionKeys.VIEW);
 
 		return _kaleoDefinitionLocalService.getScopeKaleoDefinitions(
 			scope, start, end, orderByComparator, serviceContext);
