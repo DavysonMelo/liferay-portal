@@ -8,6 +8,7 @@ package com.liferay.ai.hub.web.internal.display.context;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.WebKeys;
@@ -72,7 +73,8 @@ public class ViewIssueReportsDisplayContext {
 				new DefaultDTOConverterContext(
 					false, null, null, _httpServletRequest, null,
 					_themeDisplay.getLocale(), null, _themeDisplay.getUser()),
-				null, Pagination.of(1, 1), null, null);
+				null, Pagination.of(QueryUtil.ALL_POS, QueryUtil.ALL_POS), null,
+				null);
 
 			criticalCount = _getFacetCount(page, "level", "critical");
 			negativeCount = _getFacetCount(page, "feedback", "negative");

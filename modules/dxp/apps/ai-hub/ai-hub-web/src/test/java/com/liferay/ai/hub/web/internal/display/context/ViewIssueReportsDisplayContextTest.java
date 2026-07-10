@@ -8,12 +8,14 @@ package com.liferay.ai.hub.web.internal.display.context;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.rest.manager.v1_0.ObjectEntryManager;
 import com.liferay.object.service.ObjectDefinitionLocalService;
+import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.portal.vulcan.aggregation.Facet;
 import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.portal.vulcan.pagination.Pagination;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -87,34 +89,45 @@ public class ViewIssueReportsDisplayContextTest {
 			Mockito.mock(ObjectDefinition.class)
 		);
 
-		Page<?> page = Mockito.mock(Page.class);
-
-		Mockito.when(
-			page.getTotalCount()
-		).thenReturn(
-			10L
-		);
-
-		Mockito.when(
-			page.getFacets()
-		).thenReturn(
-			List.of(
-				new Facet(
-					"level", List.of(new Facet.FacetValue(2, "critical"))),
-				new Facet(
-					"feedback",
-					List.of(
-						new Facet.FacetValue(3, "negative"),
-						new Facet.FacetValue(6, "positive"))))
-		);
-
 		Mockito.when(
 			_objectEntryManager.getObjectEntries(
 				Mockito.anyLong(), Mockito.any(), Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
 				Mockito.any())
-		).thenReturn(
-			(Page)page
+		).thenAnswer(
+			invocation -> {
+				Pagination pagination = invocation.getArgument(6);
+
+				int pageSize = pagination.getPageSize();
+
+				Page<?> page = Mockito.mock(Page.class);
+
+				Mockito.when(
+					page.getTotalCount()
+				).thenReturn(
+					10L
+				);
+
+				Mockito.when(
+					page.getFacets()
+				).thenReturn(
+					List.of(
+						new Facet(
+							"level",
+							_limitFacetValues(
+								List.of(new Facet.FacetValue(2, "critical")),
+								pageSize)),
+						new Facet(
+							"feedback",
+							_limitFacetValues(
+								List.of(
+									new Facet.FacetValue(3, "negative"),
+									new Facet.FacetValue(6, "positive")),
+								pageSize)))
+				);
+
+				return page;
+			}
 		);
 
 		Map<String, Object> cardsReactData =
@@ -143,6 +156,16 @@ public class ViewIssueReportsDisplayContextTest {
 		Assert.assertEquals(0L, cardsReactData.get("criticalIssuesCount"));
 		Assert.assertEquals(0, cardsReactData.get("dislikeRatingPercent"));
 		Assert.assertEquals(0, cardsReactData.get("positiveRatingPercent"));
+	}
+
+	private List<Facet.FacetValue> _limitFacetValues(
+		List<Facet.FacetValue> facetValues, int pageSize) {
+
+		if (pageSize == QueryUtil.ALL_POS) {
+			return facetValues;
+		}
+
+		return facetValues.subList(0, Math.min(pageSize, facetValues.size()));
 	}
 
 	@Mock
