@@ -34,10 +34,16 @@ import ContentTypeSelectorMessageBalloon, {
 	ContentType,
 } from './components/ContentTypeSelectorMessageBalloon';
 import ContentsMessageBalloon from './components/ContentsMessageBalloon';
+import FieldValueMessageBalloon from './components/FieldValueMessageBalloon';
 import ImageMessageBalloon from './components/ImageMessageBalloon';
 import UserMessageBalloon from './components/UserMessageBalloon';
+import {
+	APPLY_OBJECT_FIELD_VALUES_EVENT,
+	GENERATE_FIELD_VALUE_AGENT_EXTERNAL_REFERENCE_CODE,
+} from './events';
 import {ChatMessageSentData, Message} from './types';
 import buildAssistantMessage from './utils/buildAssistantMessage';
+import getGeneratedFieldValues from './utils/getGeneratedFieldValues';
 import parseContentDraftsMessage from './utils/parseContentDraftsMessage';
 
 import './chat.scss';
@@ -540,6 +546,38 @@ const AIAssistantChat: React.FC<AIAssistantChatProps> = ({
 									objectEntryFolderExternalReferenceCode:
 										context.objectEntryFolderExternalReferenceCode,
 								}}
+							/>
+						);
+					}
+
+					const fieldValues =
+						!item.error &&
+						item.agentDefinitionExternalReferenceCodes?.includes(
+							GENERATE_FIELD_VALUE_AGENT_EXTERNAL_REFERENCE_CODE
+						)
+							? getGeneratedFieldValues(item.text)
+							: {};
+
+					if (Object.keys(fieldValues).length) {
+						const previousMessage = messages[index - 1];
+
+						return (
+							<FieldValueMessageBalloon
+								key={index}
+								onApply={() =>
+									Liferay.fire(
+										APPLY_OBJECT_FIELD_VALUES_EVENT,
+										{
+											values: fieldValues,
+										}
+									)
+								}
+								onRegenerate={() => {
+									if (previousMessage?.sender === 'user') {
+										sendMessage(previousMessage.text);
+									}
+								}}
+								values={fieldValues}
 							/>
 						);
 					}
