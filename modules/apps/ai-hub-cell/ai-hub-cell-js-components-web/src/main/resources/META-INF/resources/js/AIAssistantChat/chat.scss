@@ -227,21 +227,6 @@ html#{$cadmin-selector} .cadmin {
 			padding-top: 1rem;
 		}
 
-		.ai-assistant-chat__input-row {
-			align-items: flex-end;
-			display: flex;
-			flex-direction: row;
-		}
-
-		.ai-assistant-chat__input {
-			height: auto;
-			margin-right: 0.5rem;
-			max-height: calc(1.25em * 4);
-			overflow-x: hidden;
-			overflow-y: auto;
-			resize: none;
-		}
-
 		.ai-assistant-chat__generating-loading-text {
 			-webkit-background-clip: text;
 			-webkit-text-fill-color: transparent;
