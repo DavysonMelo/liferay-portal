@@ -1729,6 +1729,27 @@ public class ObjectActionLocalServiceTest {
 	}
 
 	@Test
+	public void testAddObjectActionWithUnmodifiableSystemObjectDefinition()
+		throws Exception {
+
+		ObjectDefinition accountEntryObjectDefinition =
+			_objectDefinitionLocalService.fetchObjectDefinitionByClassName(
+				TestPropsValues.getCompanyId(), AccountEntry.class.getName());
+
+		AssertUtils.assertFailure(
+			ObjectActionTriggerKeyException.class,
+			"The object action trigger key standalone cannot be used by a " +
+				"system object definition",
+			() -> _addObjectAction(
+				accountEntryObjectDefinition.getObjectDefinitionId(),
+				ObjectActionExecutorConstants.KEY_GROOVY,
+				ObjectActionTriggerConstants.KEY_STANDALONE,
+				UnicodePropertiesBuilder.put(
+					"script", "println \"Hello World\""
+				).build()));
+	}
+
+	@Test
 	public void testAddObjectActionWithUsePreferredLanguageForGuestsParameter()
 		throws Exception {
 
