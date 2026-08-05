@@ -53,6 +53,10 @@ public class
 				companyId, WorkflowConstants.STATUS_APPROVED);
 
 		for (ObjectDefinition objectDefinition : objectDefinitions) {
+			if (objectDefinition.isUnmodifiableSystemObject()) {
+				continue;
+			}
+
 			List<ObjectField> objectFields =
 				_objectFieldLocalService.getObjectFieldsByBusinessType(
 					objectDefinition.getObjectDefinitionId(),
