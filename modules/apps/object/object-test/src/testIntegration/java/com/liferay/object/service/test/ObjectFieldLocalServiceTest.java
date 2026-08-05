@@ -164,6 +164,60 @@ public class ObjectFieldLocalServiceTest {
 	}
 
 	@Test
+	public void testAddCustomAttachmentObjectFieldToUnmodifiableSystemObjectDefinition()
+		throws Exception {
+
+		ObjectDefinition objectDefinition =
+			_addUnmodifiableSystemObjectDefinition(
+				ObjectFieldUtil.createObjectField(
+					ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+					ObjectFieldConstants.DB_TYPE_STRING, "able",
+					Collections.emptyList()));
+
+		ObjectField objectField = _addCustomObjectField(
+			new AttachmentObjectFieldBuilder(
+			).labelMap(
+				LocalizedMapUtil.getLocalizedMap(RandomTestUtil.randomString())
+			).name(
+				"baker"
+			).objectDefinitionId(
+				objectDefinition.getObjectDefinitionId()
+			).objectFieldSettings(
+				Arrays.asList(
+					new ObjectFieldSettingBuilder(
+					).name(
+						ObjectFieldSettingConstants.
+							NAME_ACCEPTED_FILE_EXTENSIONS
+					).value(
+						"txt"
+					).build(),
+					new ObjectFieldSettingBuilder(
+					).name(
+						ObjectFieldSettingConstants.NAME_FILE_SOURCE
+					).value(
+						ObjectFieldSettingConstants.VALUE_DOCS_AND_MEDIA
+					).build(),
+					new ObjectFieldSettingBuilder(
+					).name(
+						ObjectFieldSettingConstants.NAME_MAX_FILE_SIZE
+					).value(
+						"100"
+					).build())
+			).build());
+
+		Assert.assertNotNull(
+			_objectFieldLocalService.fetchObjectField(
+				objectDefinition.getObjectDefinitionId(),
+				objectField.getName()));
+		Assert.assertNull(
+			_resourceActionLocalService.fetchResourceAction(
+				objectDefinition.getClassName(),
+				objectField.getAttachmentDownloadActionKey()));
+
+		_objectDefinitionLocalService.deleteObjectDefinition(objectDefinition);
+	}
+
+	@Test
 	public void testAddCustomObjectField() throws Exception {
 		AssertUtils.assertFailure(
 			ObjectFieldBusinessTypeException.class,
